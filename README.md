@@ -1,6 +1,6 @@
 # PHP Autolink Library
 
-A library to auto convert URLs to links in text.
+A library to auto convert URLs to links.
 
 ## Installation via Composer
 
