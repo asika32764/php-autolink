@@ -99,6 +99,21 @@ This is SSL URL:
 <a href="https://www.google.com.tw" class="center">https://www.google.com.tw</a>
 ```
 
+## Convert Email
+
+Email url has no scheme, we use anoter method to convert them, and it will add `mailto:` at begin of `href`.
+
+``` php
+$text = $aurolink->convertEmail($text);
+```
+
+Output
+
+``` html
+<a href="mailto:foo@example.com">foo@example.com</a>
+
+```
+
 ## Options
 
 ### `text_limit`
