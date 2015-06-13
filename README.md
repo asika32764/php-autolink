@@ -72,7 +72,7 @@ $text = $autolink->convert($text);
 
 Output:
 
-``` php
+``` html
 This is Simple URL:
 <a href="http://www.google.com.tw">http://www.google.com.tw</a>
 
@@ -113,11 +113,11 @@ $text = $autolink->convert($text);
 
 The link text will be:
 
-``` php
+```
 http://campus.asukademy.com/learning/job/84-fin...
 ```
 
-Use Your own limit handler:
+Use Your own limit handler by set a callback:
 
 ``` php
 $auitolink->textLimit(function($url)
@@ -126,7 +126,7 @@ $auitolink->textLimit(function($url)
 });
 ```
 
-Or use Pretty shorter:
+Or use `\Asika\Autolink\Linker::shorten()` Pretty handler:
 
 ``` php
 $auitolink->textLimit(function($url)
