@@ -6,12 +6,12 @@
  * @license    GNU General Public License version 2 or later;
  */
 
-namespace Asika;
+namespace Asika\Autolink;
 
 /**
  * The LinkHelper class.
  * 
- * @since  {DEPLOY_VERSION}
+ * @since  1.0
  */
 class LinkHelper
 {

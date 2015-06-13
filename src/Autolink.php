@@ -6,14 +6,14 @@
  * @license    GNU General Public License version 2 or later;
  */
 
-namespace Asika;
+namespace Asika\Autolink;
 
 use Windwalker\Dom\HtmlElement;
 
 /**
  * The Autolink class.
  * 
- * @since  {DEPLOY_VERSION}
+ * @since  1.0
  */
 class Autolink
 {
@@ -68,7 +68,7 @@ class Autolink
 	 *
 	 * @return  string
 	 */
-	public function render($text, $attribs = array())
+	public function convert($text, $attribs = array())
 	{
 		$self = $this;
 
@@ -82,7 +82,7 @@ class Autolink
 
 				if (!$inElements)
 				{
-					return $self->convert($matches[0], $attribs);
+					return $self->link($matches[0], $attribs);
 				}
 
 				return $matches[0];
@@ -99,7 +99,7 @@ class Autolink
 	 *
 	 * @return  string
 	 */
-	public function renderEmail($text, $attribs = array())
+	public function convertEmail($text, $attribs = array())
 	{
 		$regex = "/(([a-zA-Z]*=\")*\S+@\S+\.\S+)/";
 
@@ -130,7 +130,7 @@ class Autolink
 	 *
 	 * @return  string
 	 */
-	public function convert($url, $attribs = array())
+	public function link($url, $attribs = array())
 	{
 		$content = $url;
 

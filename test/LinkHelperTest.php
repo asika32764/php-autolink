@@ -9,7 +9,7 @@
 /**
  * The LinkHelperTest class.
  * 
- * @since  {DEPLOY_VERSION}
+ * @since  1.0
  */
 class LinkHelperTest extends \Windwalker\Test\TestCase\AbstractBaseTestCase
 {
@@ -61,6 +61,6 @@ class LinkHelperTest extends \Windwalker\Test\TestCase\AbstractBaseTestCase
 	 */
 	public function testShorten($url, $expect, $limit, $dots)
 	{
-		$this->assertEquals($expect, \Asika\LinkHelper::shorten($url, $limit, $dots));
+		$this->assertEquals($expect, \Asika\Autolink\LinkHelper::shorten($url, $limit, $dots));
 	}
 }
