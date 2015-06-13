@@ -1,0 +1,24 @@
+{
+    "name": "asika/autolink",
+    "description": "Auto convert url to link anchor.",
+    "type": "library",
+    "require": {
+        "windwalker/dom": "~2.0@stable"
+    },
+    "require-dev": {
+        "windwalker/test": "~2.0@stable"
+    },
+    "autoload": {
+        "psr-4": {
+            "Asika\\": "src/"
+        }
+    },
+    "license": "LGPL-3.0+",
+    "authors": [
+        {
+            "name": "Simon Asika",
+            "email": "asika32764@gmail.com"
+        }
+    ],
+    "minimum-stability": "beta"
+}
