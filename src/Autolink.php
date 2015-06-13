@@ -41,6 +41,13 @@ class Autolink
 	);
 
 	/**
+	 * Property linkBuilder.
+	 *
+	 * @var  callable
+	 */
+	protected $linkBuilder;
+
+	/**
 	 * Class init.
 	 *
 	 * @param array $options Basic options.
@@ -75,7 +82,7 @@ class Autolink
 
 				if (!$inElements)
 				{
-					return $self->convert($matches[0]);
+					return $self->convert($matches[0], $attribs);
 				}
 
 				return $matches[0];
@@ -106,7 +113,7 @@ class Autolink
 				{
 					$attribs['href'] = 'mailto:' . htmlspecialchars($matches[0]);
 
-					return (string) new HtmlElement('a', htmlspecialchars($matches[0]), $attribs);
+					return $this->buildLink($matches[0], $attribs);
 				}
 
 				return $matches[0];
@@ -154,7 +161,25 @@ class Autolink
 			$attribs['title'] = htmlspecialchars($url);
 		}
 
-		return (string) new HtmlElement('a', htmlspecialchars($content), $attribs);
+		return $this->buildLink($content, $attribs);
+	}
+
+	/**
+	 * buildLink
+	 *
+	 * @param string $url
+	 * @param array  $attribs
+	 *
+	 * @return  string
+	 */
+	protected function buildLink($url = null, $attribs = array())
+	{
+		if (is_callable($this->linkBuilder))
+		{
+			return call_user_func($this->linkBuilder, $url, $attribs);
+		}
+
+		return (string) new HtmlElement('a', htmlspecialchars($url), $attribs);
 	}
 
 	/**
@@ -327,6 +352,35 @@ class Autolink
 		$schemes = array_unique(array_map('strtolower', (array) $schemes));
 
 		$this->schemes = $schemes;
+
+		return $this;
+	}
+
+	/**
+	 * Method to get property LinkBuilder
+	 *
+	 * @return  callable
+	 */
+	public function getLinkBuilder()
+	{
+		return $this->linkBuilder;
+	}
+
+	/**
+	 * Method to set property linkBuilder
+	 *
+	 * @param   callable $linkBuilder
+	 *
+	 * @return  static  Return self to support chaining.
+	 */
+	public function setLinkBuilder($linkBuilder)
+	{
+		if (!is_callable($linkBuilder))
+		{
+			throw new \InvalidArgumentException('Please use a callable or Closure.');
+		}
+
+		$this->linkBuilder = $linkBuilder;
 
 		return $this;
 	}

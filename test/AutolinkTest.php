@@ -276,4 +276,21 @@ HTML;
 
 		$this->assertStringSafeEquals($html, $this->instance->renderEmail($text));
 	}
+
+	/**
+	 * testSetLinkBuilder
+	 *
+	 * @return  void
+	 */
+	public function testGetAndSetLinkBuilder()
+	{
+		$this->instance->setLinkBuilder(function($url, $attribs)
+		{
+			return $url . json_encode($attribs);
+		});
+
+		$this->assertEquals('http://google.com{"foo":"bar","href":"http:\/\/google.com"}', $this->instance->convert('http://google.com', array('foo' => 'bar')));
+
+		$this->assertInstanceOf('Closure', $this->instance->getLinkBuilder());
+	}
 }
