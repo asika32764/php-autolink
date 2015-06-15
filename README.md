@@ -212,6 +212,6 @@ $autolink->setLinkBuilder(function($url, $attribs)
 });
 ```
 
-See: [Windwalker Html Package](https://github.com/ventoviro/windwalker-html)
+See: [Windwalker Dom Package](https://github.com/ventoviro/windwalker-dom)
 
 
