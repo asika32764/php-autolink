@@ -141,12 +141,12 @@ $auitolink->textLimit(function($url)
 });
 ```
 
-Or use `\Asika\Autolink\Linker::shorten()` Pretty handler:
+Or use `\Asika\Autolink\LinkHelper::shorten()` Pretty handler:
 
 ``` php
 $auitolink->textLimit(function($url)
 {
-    return \Asika\Autolink\Linker::shorten($url, 15, 6);
+    return \Asika\Autolink\LinkHelper::shorten($url, 15, 6);
 });
 ```
 
