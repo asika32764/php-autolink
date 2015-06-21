@@ -78,7 +78,7 @@ class Autolink
 			$regex,
 			function($matches) use ($self, $attribs)
 			{
-				preg_match('/[a-zA-Z]*\=\"(.*)\"/', $matches[0], $inElements);
+				preg_match('/[a-zA-Z]*\=\"(.*)/', $matches[0], $inElements);
 
 				if (!$inElements)
 				{
@@ -107,7 +107,7 @@ class Autolink
 			$regex,
 			function($matches) use ($attribs)
 			{
-				preg_match('/[a-zA-Z]*\=\"(.*)\"/', $matches[0], $inElements);
+				preg_match('/[a-zA-Z]*\=\"(.*)/', $matches[0], $inElements);
 
 				if (!$inElements)
 				{
