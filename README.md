@@ -190,7 +190,7 @@ Output
 
 ## Scheme
 
-You can add new scheme to convert URL begin with it, foe example: `vnc://example.com`
+You can add new scheme to convert URL begin with it, for example: `vnc://example.com`
 
 ``` php
 $autolink->addScheme('skype')
@@ -208,7 +208,7 @@ $autolink->setLinkBuilder(function($url, $attribs)
 {
     $attribs['src'] = htmlspecialchars($url);
 
-    return (string) \Windwalker\Html\HtmlElement('img', null, $attribs);
+    return (string) new \Windwalker\Html\HtmlElement('img', null, $attribs);
 });
 ```
 
