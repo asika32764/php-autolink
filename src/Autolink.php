@@ -101,11 +101,13 @@ class Autolink
 	 */
 	public function convertEmail($text, $attribs = array())
 	{
+		$self = $this;
+		
 		$regex = "/(([a-zA-Z]*=\")*\S+@\S+\.\S+)/";
 
 		return preg_replace_callback(
 			$regex,
-			function($matches) use ($attribs)
+			function($matches) use ($self, $attribs)
 			{
 				preg_match('/[a-zA-Z]*\=\"(.*)/', $matches[0], $inElements);
 
@@ -113,7 +115,7 @@ class Autolink
 				{
 					$attribs['href'] = 'mailto:' . htmlspecialchars($matches[0]);
 
-					return $this->buildLink($matches[0], $attribs);
+					return $self->buildLink($matches[0], $attribs);
 				}
 
 				return $matches[0];
