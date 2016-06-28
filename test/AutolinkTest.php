@@ -64,6 +64,7 @@ This is URL in HTML:
 <a href="http://example.com/path?foo[1]=a&foo[2]=b">http://example.com/path?foo[1]=a&foo[2]=b</a>
 <img src="http://example.com/path?foo[1]=a&foo[2]=b" width="100"/>
 <div data-target="http://example.com/path?foo[1]=a&foo[2]=b" wdith="100"/></div>
+<p>http://example.com/path?foo[1]=a&foo[2]=b</p>
 
 TEXT;
 
@@ -93,6 +94,7 @@ This is URL in HTML:
 <a href="http://example.com/path?foo[1]=a&foo[2]=b">http://example.com/path?foo[1]=a&foo[2]=b</a>
 <img src="http://example.com/path?foo[1]=a&foo[2]=b" width="100"/>
 <div data-target="http://example.com/path?foo[1]=a&foo[2]=b" wdith="100"/></div>
+<p>http://example.com/path?foo[1]=a&foo[2]=b</p>
 
 HTML;
 

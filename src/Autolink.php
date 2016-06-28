@@ -72,7 +72,7 @@ class Autolink
 	{
 		$self = $this;
 
-		$regex = "/(([a-zA-Z]*=\")*(" . $this->getSchemes(true) . ")\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(\/\S*)?)/";
+		echo $regex = "/(([a-zA-Z]*=\")*(" . $this->getSchemes(true) . ")\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(\/\S*)?)/";
 
 		return preg_replace_callback(
 			$regex,
