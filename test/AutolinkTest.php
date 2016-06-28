@@ -258,7 +258,7 @@ This is Email in HTML:
 <div data-target="sakura@flower.com" wdith="100"/></div>
 <div data-target="mailto:sakura@flower.com" wdith="100"/></div>
 
-and emails are coming in between(salsan@lt.com). 
+and emails are coming in between(sakura@flower.com). 
 TEXT;
 
 		$html = <<<HTML
@@ -273,6 +273,7 @@ This is Email in HTML:
 <div data-target="sakura@flower.com" wdith="100"/></div>
 <div data-target="mailto:sakura@flower.com" wdith="100"/></div>
 
+and emails are coming in between(<a href="mailto:sakura@flower.com">sakura@flower.com</a>).
 HTML;
 
 
