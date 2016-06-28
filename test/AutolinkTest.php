@@ -258,6 +258,8 @@ This is Email in HTML:
 <div data-target="sakura@flower.com" wdith="100"/></div>
 <div data-target="mailto:sakura@flower.com" wdith="100"/></div>
 
+My email address is sakura@flower.com.
+
 and emails are coming in between(sakura@flower.com). 
 TEXT;
 
@@ -272,6 +274,8 @@ This is Email in HTML:
 <a href="mailto:sakura@flower.com">sakura@flower.com</a>
 <div data-target="sakura@flower.com" wdith="100"/></div>
 <div data-target="mailto:sakura@flower.com" wdith="100"/></div>
+
+My email address is <a href="mailto:sakura@flower.com">sakura@flower.com</a>.
 
 and emails are coming in between(<a href="mailto:sakura@flower.com">sakura@flower.com</a>).
 HTML;
