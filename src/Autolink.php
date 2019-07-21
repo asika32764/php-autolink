@@ -25,7 +25,8 @@ class Autolink
     public $options = array(
         'strip_scheme' => false,
         'text_limit' => false,
-        'auto_title' => false
+        'auto_title' => false,
+        'escape' => true
     );
 
     /**
@@ -109,7 +110,9 @@ class Autolink
                 preg_match('/[a-zA-Z]*\=\"(.*)/', $matches[0], $inElements);
 
                 if (!$inElements) {
-                    $attribs['href'] = 'mailto:' . htmlspecialchars($matches[0]);
+                    $email = $self->autoEscape() ? htmlspecialchars($matches[0]) : $matches[0];
+
+                    $attribs['href'] = 'mailto:' . $email;
 
                     return $self->buildLink($matches[0], $attribs);
                 }
@@ -146,7 +149,7 @@ class Autolink
             }
         }
 
-        $attribs['href'] = htmlspecialchars($url);
+        $attribs['href'] = $this->autoEscape() ? htmlspecialchars($url) : $url;
 
         if ($this->autoTitle()) {
             $attribs['title'] = htmlspecialchars($url);
@@ -203,6 +206,20 @@ class Autolink
     public function stripScheme($value = null)
     {
         return $this->optionAccess('strip_scheme', $value);
+    }
+
+    /**
+     * autoEscape
+     *
+     * @param mixed $value
+     *
+     * @return  mixed|static
+     *
+     * @since  __DEPLOY_VERSION__
+     */
+    public function autoEscape($value = null)
+    {
+        return $this->optionAccess('escape', $value);
     }
 
     /**

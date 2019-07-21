@@ -41,7 +41,8 @@ Create with options.
 $options = array(
     'strip_scheme' => false,
     'text_limit' => false,
-    'auto_title' => false
+    'auto_title' => false,
+    'escape' => true
 );
 
 $schemes = array('http', 'https', 'skype', 'itunes');
@@ -186,6 +187,22 @@ Output
 
 ``` html
 <a href="http://www.google.com.tw" >www.google.com.tw</a>
+```
+
+### `escape`
+
+Strip Scheme on link text:
+
+``` php
+$auitolink->autoEscape(true);
+
+$text = $autolink->convert($text);
+```
+
+Output
+
+``` html
+<a href="http://www.google.com.tw?foo=bar&yoo=baz" >http://www.google.com.tw?foo=bar&yoo=baz</a>
 ```
 
 ## Scheme

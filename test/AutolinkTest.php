@@ -243,6 +243,29 @@ HTML;
         $this->assertEquals(array(), $autolink->getSchemes());
     }
 
+    public function testAutoEscape()
+    {
+        $autolink = new Autolink();
+
+        $url = 'https://example.com/?foo=bar&yoo=baz';
+
+        $this->assertEquals('<a href="' . htmlspecialchars($url) . '">' . htmlspecialchars($url) . '</a>', $autolink->convert($url));
+
+        $autolink->autoEscape(false);
+
+        $this->assertEquals('<a href="' . $url . '">' . htmlspecialchars($url) . '</a>', $autolink->convert($url));
+
+        $url = 'hello+admin&test@example.org';
+
+        $autolink->autoEscape(true);
+
+        $this->assertEquals('<a href="mailto:' . htmlspecialchars($url) . '">' . htmlspecialchars($url) . '</a>', $autolink->convertEmail($url));
+
+        $autolink->autoEscape(false);
+
+        $this->assertEquals('<a href="mailto:' . $url . '">' . htmlspecialchars($url) . '</a>', $autolink->convertEmail($url));
+    }
+
     public function testConvertEmail()
     {
         $text = <<<TEXT
