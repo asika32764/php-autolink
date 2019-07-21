@@ -20,11 +20,17 @@
         "windwalker/dom": "~2.0|~3.0"
     },
     "require-dev": {
-        "windwalker/test": "~2.0|~3.0"
+        "windwalker/test": "~2.0|~3.0",
+        "phpunit/phpunit": "^4.0"
     },
     "autoload": {
         "psr-4": {
             "Asika\\Autolink\\": "src/"
+        }
+    },
+    "config": {
+        "platform": {
+            "php": "5.3.10"
         }
     },
     "license": "MIT"
