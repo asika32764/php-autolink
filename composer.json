@@ -2,9 +2,21 @@
     "name": "asika/autolink",
     "description": "Auto convert url to link anchor.",
     "type": "library",
+    "keywords": [
+        "link",
+        "linkify",
+        "autolink"
+    ],
+    "authors": [
+        {
+            "name": "Simon Asika",
+            "email": "asika32764@gmail.com"
+        }
+    ],
     "homepage": "https://github.com/asika32764/php-autolink",
-    "license": "GPL-3.0+",
+    "minimum-stability": "beta",
     "require": {
+        "php": ">=5.3",
         "windwalker/dom": "~2.0|~3.0"
     },
     "require-dev": {
@@ -15,12 +27,5 @@
             "Asika\\Autolink\\": "src/"
         }
     },
-    "license": "LGPL-3.0+",
-    "authors": [
-        {
-            "name": "Simon Asika",
-            "email": "asika32764@gmail.com"
-        }
-    ],
-    "minimum-stability": "beta"
+    "license": "MIT"
 }
