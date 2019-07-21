@@ -21,6 +21,7 @@
     },
     "require-dev": {
         "windwalker/test": "~2.0|~3.0",
+        "windwalker/utilities": "~2.0|~3.0",
         "phpunit/phpunit": "^4.0"
     },
     "autoload": {

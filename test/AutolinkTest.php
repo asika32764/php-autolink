@@ -1,44 +1,45 @@
 <?php
 /**
- * Part of php-autolink project. 
+ * Part of php-autolink project.
  *
  * @copyright  Copyright (C) 2015 {ORGANIZATION}. All rights reserved.
  * @license    GNU General Public License version 2 or later;
  */
+
 use Asika\Autolink\Autolink;
 
 /**
  * The AutolinkTest class.
- * 
+ *
  * @since  1.0
  */
 class AutolinkTest extends \Windwalker\Test\TestCase\AbstractBaseTestCase
 {
-	/**
-	 * Property instance.
-	 *
-	 * @var  Autolink
-	 */
-	protected $instance;
+    /**
+     * Property instance.
+     *
+     * @var  Autolink
+     */
+    protected $instance;
 
-	/**
-	 * setUp
-	 *
-	 * @return  void
-	 */
-	public function setUp()
-	{
-		$this->instance = new Autolink;
-	}
+    /**
+     * setUp
+     *
+     * @return  void
+     */
+    public function setUp()
+    {
+        $this->instance = new Autolink();
+    }
 
-	/**
-	 * testConvert
-	 *
-	 * @return  void
-	 */
-	public function testConvert()
-	{
-		$text = <<<TEXT
+    /**
+     * testConvert
+     *
+     * @return  void
+     */
+    public function testConvert()
+    {
+        $text = <<<TEXT
 This is Simple URL:
 http://www.google.com.tw
 
@@ -68,7 +69,7 @@ This is URL in HTML:
 
 TEXT;
 
-		$html = <<<HTML
+        $html = <<<HTML
 This is Simple URL:
 <a href="http://www.google.com.tw">http://www.google.com.tw</a>
 
@@ -98,155 +99,153 @@ This is URL in HTML:
 
 HTML;
 
-		$this->assertStringSafeEquals($html, $this->instance->convert($text));
-	}
+        $this->assertStringSafeEquals($html, $this->instance->convert($text));
+    }
 
-	/**
-	 * testConvert
-	 *
-	 * @return  void
-	 */
-	public function testLink()
-	{
-		$url = 'http://www.google.com';
+    /**
+     * testConvert
+     *
+     * @return  void
+     */
+    public function testLink()
+    {
+        $url = 'http://www.google.com';
 
-		$this->assertEquals(
-			'<a foo="bar" href="http://www.google.com">http://www.google.com</a>',
-			$this->instance->link($url, array('foo' => 'bar'))
-		);
+        $this->assertEquals(
+            '<a foo="bar" href="http://www.google.com">http://www.google.com</a>',
+            $this->instance->link($url, array('foo' => 'bar'))
+        );
 
-		$this->instance->stripScheme(true);
+        $this->instance->stripScheme(true);
 
-		$this->assertEquals(
-			'<a foo="bar" href="http://www.google.com">www.google.com</a>',
-			$this->instance->link($url, array('foo' => 'bar'))
-		);
+        $this->assertEquals(
+            '<a foo="bar" href="http://www.google.com">www.google.com</a>',
+            $this->instance->link($url, array('foo' => 'bar'))
+        );
 
-		$this->instance->autoTitle(true);
+        $this->instance->autoTitle(true);
 
-		$this->assertEquals(
-			'<a foo="bar" href="http://www.google.com" title="http://www.google.com">www.google.com</a>',
-			$this->instance->link($url, array('foo' => 'bar'))
-		);
-	}
+        $this->assertEquals(
+            '<a foo="bar" href="http://www.google.com" title="http://www.google.com">www.google.com</a>',
+            $this->instance->link($url, array('foo' => 'bar'))
+        );
+    }
 
-	/**
-	 * testTextLimit
-	 *
-	 * @return  void
-	 */
-	public function testTextLimit()
-	{
-		$url = 'http://campus.asukademy.com/learning/job/84-find-internship-opportunity-through-platform.html';
+    /**
+     * testTextLimit
+     *
+     * @return  void
+     */
+    public function testTextLimit()
+    {
+        $url = 'http://campus.asukademy.com/learning/job/84-find-internship-opportunity-through-platform.html';
 
-		$this->instance->textLimit(50);
+        $this->instance->textLimit(50);
 
-		$this->assertEquals(
-			'<a href="http://campus.asukademy.com/learning/job/84-find-internship-opportunity-through-platform.html">http://campus.asukademy.com/learning/job/84-fin...</a>',
-			$this->instance->link($url)
-		);
+        $this->assertEquals(
+            '<a href="http://campus.asukademy.com/learning/job/84-find-internship-opportunity-through-platform.html">http://campus.asukademy.com/learning/job/84-fin...</a>',
+            $this->instance->link($url)
+        );
 
-		$this->instance->textLimit(function($url)
-		{
-			return \Asika\Autolink\LinkHelper::shorten($url);
-		});
+        $this->instance->textLimit(function ($url) {
+            return \Asika\Autolink\LinkHelper::shorten($url);
+        });
 
-		$this->assertEquals(
-			'<a href="http://campus.asukademy.com/learning/job/84-find-internship-opportunity-through-platform.html">http://campus.asukademy.com/....../84-find-interns......</a>',
-			$this->instance->link($url)
-		);
-	}
+        $this->assertEquals(
+            '<a href="http://campus.asukademy.com/learning/job/84-find-internship-opportunity-through-platform.html">http://campus.asukademy.com/....../84-find-interns......</a>',
+            $this->instance->link($url)
+        );
+    }
 
-	/**
-	 * testAutoTitle
-	 *
-	 * @return  void
-	 */
-	public function testAutoTitle()
-	{
-		$url = 'http://example.com/path?foo["1"]=a&foo[\'2\']=b';
+    /**
+     * testAutoTitle
+     *
+     * @return  void
+     */
+    public function testAutoTitle()
+    {
+        $url = 'http://example.com/path?foo["1"]=a&foo[\'2\']=b';
 
-		$this->instance->autoTitle(true);
+        $this->instance->autoTitle(true);
 
-		$this->assertEquals(
-			'<a foo="bar" href="http://example.com/path?foo[&quot;1&quot;]=a&amp;foo[\'2\']=b" title="http://example.com/path?foo[&quot;1&quot;]=a&amp;foo[\'2\']=b">http://example.com/path?foo[&quot;1&quot;]=a&amp;foo[\'2\']=b</a>',
-			$this->instance->link($url, array('foo' => 'bar'))
-		);
-	}
+        $this->assertEquals(
+            '<a foo="bar" href="http://example.com/path?foo[&quot;1&quot;]=a&amp;foo[\'2\']=b" title="http://example.com/path?foo[&quot;1&quot;]=a&amp;foo[\'2\']=b">http://example.com/path?foo[&quot;1&quot;]=a&amp;foo[\'2\']=b</a>',
+            $this->instance->link($url, array('foo' => 'bar'))
+        );
+    }
 
-	/**
-	 * testStripScheme
-	 *
-	 * @return  void
-	 */
-	public function testStripScheme()
-	{
-		$this->instance->stripScheme(true);
+    /**
+     * testStripScheme
+     *
+     * @return  void
+     */
+    public function testStripScheme()
+    {
+        $this->instance->stripScheme(true);
 
-		$url = 'http://campus.asukademy.com/learning/job/84-find-internship-opportunity-through-platform.html';
+        $url = 'http://campus.asukademy.com/learning/job/84-find-internship-opportunity-through-platform.html';
 
-		$this->assertEquals(
-			'<a href="http://campus.asukademy.com/learning/job/84-find-internship-opportunity-through-platform.html">campus.asukademy.com/learning/job/84-find-internship-opportunity-through-platform.html</a>',
-			$this->instance->link($url)
-		);
+        $this->assertEquals(
+            '<a href="http://campus.asukademy.com/learning/job/84-find-internship-opportunity-through-platform.html">campus.asukademy.com/learning/job/84-find-internship-opportunity-through-platform.html</a>',
+            $this->instance->link($url)
+        );
+    }
 
-	}
+    public function testAddScheme()
+    {
+        $url = 'ftp://example.com';
 
-	public function testAddScheme()
-	{
-		$url = 'ftp://example.com';
+        $this->assertEquals('<a href="' . $url . '">' . $url . '</a>', $this->instance->convert($url));
 
-		$this->assertEquals('<a href="' . $url . '">' . $url . '</a>', $this->instance->convert($url));
+        $url = 'ftps://example.com';
 
-		$url = 'ftps://example.com';
+        $this->assertEquals('<a href="' . $url . '">' . $url . '</a>', $this->instance->convert($url));
 
-		$this->assertEquals('<a href="' . $url . '">' . $url . '</a>', $this->instance->convert($url));
+        $url = 'https://example.com';
 
-		$url = 'https://example.com';
+        $this->assertEquals('<a href="' . $url . '">' . $url . '</a>', $this->instance->convert($url));
 
-		$this->assertEquals('<a href="' . $url . '">' . $url . '</a>', $this->instance->convert($url));
+        $url = 'skype://example.com';
 
-		$url = 'skype://example.com';
+        $this->assertEquals($url, $this->instance->convert($url));
 
-		$this->assertEquals($url, $this->instance->convert($url));
+        $this->instance->addScheme('skype');
 
-		$this->instance->addScheme('skype');
+        $this->assertEquals('<a href="' . $url . '">' . $url . '</a>', $this->instance->convert($url));
+    }
 
-		$this->assertEquals('<a href="' . $url . '">' . $url . '</a>', $this->instance->convert($url));
-	}
+    /**
+     * testGetAndSetScheme
+     *
+     * @return  void
+     */
+    public function testGetAndSetScheme()
+    {
+        $autolink = new Autolink(array(), array('a', 'b', 'http'));
 
-	/**
-	 * testGetAndSetScheme
-	 *
-	 * @return  void
-	 */
-	public function testGetAndSetScheme()
-	{
-		$autolink = new Autolink(array(), array('a', 'b', 'http'));
+        $this->assertEquals(array('http', 'https', 'ftp', 'ftps', 'a', 'b'), $autolink->getSchemes());
+        $this->assertEquals('http|https|ftp|ftps|a|b', $autolink->getSchemes(true));
 
-		$this->assertEquals(array('http', 'https', 'ftp', 'ftps', 'a', 'b'), $autolink->getSchemes());
-		$this->assertEquals('http|https|ftp|ftps|a|b', $autolink->getSchemes(true));
+        $autolink->setSchemes('skype');
 
-		$autolink->setSchemes('skype');
+        $this->assertEquals(array('skype'), $autolink->getSchemes());
 
-		$this->assertEquals(array('skype'), $autolink->getSchemes());
+        $autolink->setSchemes(array('mailto'));
 
-		$autolink->setSchemes(array('mailto'));
+        $this->assertEquals(array('mailto'), $autolink->getSchemes());
 
-		$this->assertEquals(array('mailto'), $autolink->getSchemes());
+        $autolink->setSchemes(array('mailto', 'mailto'));
 
-		$autolink->setSchemes(array('mailto', 'mailto'));
+        $this->assertEquals(array('mailto'), $autolink->getSchemes());
 
-		$this->assertEquals(array('mailto'), $autolink->getSchemes());
+        $autolink->removeScheme('mailto');
 
-		$autolink->removeScheme('mailto');
+        $this->assertEquals(array(), $autolink->getSchemes());
+    }
 
-		$this->assertEquals(array(), $autolink->getSchemes());
-	}
-
-	public function testConvertEmail()
-	{
-		$text = <<<TEXT
+    public function testConvertEmail()
+    {
+        $text = <<<TEXT
 This is Simple Email:
 sakura@flower.com
 
@@ -263,7 +262,7 @@ My email address is sakura@flower.com.
 and emails are coming in between(sakura@flower.com). 
 TEXT;
 
-		$html = <<<HTML
+        $html = <<<HTML
 This is Simple Email:
 <a href="mailto:sakura@flower.com">sakura@flower.com</a>
 
@@ -280,24 +279,22 @@ My email address is <a href="mailto:sakura@flower.com">sakura@flower.com</a>.
 and emails are coming in between(<a href="mailto:sakura@flower.com">sakura@flower.com</a>).
 HTML;
 
+        $this->assertStringSafeEquals($html, $this->instance->convertEmail($text));
+    }
 
-		$this->assertStringSafeEquals($html, $this->instance->convertEmail($text));
-	}
+    /**
+     * testSetLinkBuilder
+     *
+     * @return  void
+     */
+    public function testGetAndSetLinkBuilder()
+    {
+        $this->instance->setLinkBuilder(function ($url, $attribs) {
+            return $url . json_encode($attribs);
+        });
 
-	/**
-	 * testSetLinkBuilder
-	 *
-	 * @return  void
-	 */
-	public function testGetAndSetLinkBuilder()
-	{
-		$this->instance->setLinkBuilder(function($url, $attribs)
-		{
-			return $url . json_encode($attribs);
-		});
+        $this->assertEquals('http://google.com{"foo":"bar","href":"http:\/\/google.com"}', $this->instance->link('http://google.com', array('foo' => 'bar')));
 
-		$this->assertEquals('http://google.com{"foo":"bar","href":"http:\/\/google.com"}', $this->instance->link('http://google.com', array('foo' => 'bar')));
-
-		$this->assertInstanceOf('Closure', $this->instance->getLinkBuilder());
-	}
+        $this->assertInstanceOf('Closure', $this->instance->getLinkBuilder());
+    }
 }
