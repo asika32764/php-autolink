@@ -214,6 +214,31 @@ HTML;
         $this->assertEquals('<a href="' . $url . '">' . $url . '</a>', $this->instance->convert($url));
     }
 
+    public function testLinkNoScheme()
+    {
+        $this->instance->linkNoScheme('http');
+
+        $url = 'ftp://example.com';
+
+        $this->assertEquals('<a href="' . $url . '">' . $url . '</a>', $this->instance->convert($url));
+
+        $url = 'example.com';
+
+        $this->assertEquals('<a href="http://' . $url . '">' . $url . '</a>', $this->instance->convert($url));
+
+        $url = 'https://example.com';
+
+        $this->assertEquals('<a href="' . $url . '">' . $url . '</a>', $this->instance->convert($url));
+
+        $url = 'skype://example.com';
+
+        $this->assertEquals($url, $this->instance->convert($url));
+
+        $this->instance->addScheme('skype');
+
+        $this->assertEquals('<a href="' . $url . '">' . $url . '</a>', $this->instance->convert($url));
+    }
+
     /**
      * testGetAndSetScheme
      *

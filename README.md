@@ -42,7 +42,8 @@ $options = array(
     'strip_scheme' => false,
     'text_limit' => false,
     'auto_title' => false,
-    'escape' => true
+    'escape' => true,
+    'link_no_scheme' => false
 );
 
 $schemes = array('http', 'https', 'skype', 'itunes');
@@ -203,6 +204,23 @@ Output
 
 ``` html
 <a href="http://www.google.com.tw?foo=bar&yoo=baz" >http://www.google.com.tw?foo=bar&yoo=baz</a>
+```
+
+### `link_no_scheme`
+
+Convert URL which no scheme. If you pass `TRUE` to this option, Autolink will use
+`http` as default scheme, you can also provide your own default scheme.
+
+``` php
+$auitolink->linkNoScheme('https');
+
+$text = $autolink->convert('www.google.com.tw');
+```
+
+Output
+
+``` html
+<a href="https://www.google.com.tw" >www.google.com.tw</a>
 ```
 
 ## Scheme

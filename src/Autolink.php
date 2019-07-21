@@ -26,7 +26,8 @@ class Autolink
         'strip_scheme' => false,
         'text_limit' => false,
         'auto_title' => false,
-        'escape' => true
+        'escape' => true,
+        'link_no_scheme' => false
     );
 
     /**
@@ -72,19 +73,32 @@ class Autolink
     public function convert($text, $attribs = array())
     {
         $self = $this;
+        $linkNoScheme = $this->linkNoScheme();
 
-        $regex = "/(([a-zA-Z]*=\")*(" . $this->getSchemes(true) . ")\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}([\/a-zA-Z0-9\-._~:?#\[\]@!$&'()*+,;=%\">]*)?)/";
+        if ($linkNoScheme) {
+            $schemeRegex = "[(%s)\:\/\/]*";
+        } else {
+            $schemeRegex = "(%s)\:\/\/";
+        }
+
+        $schemeRegex = sprintf($schemeRegex, $this->getSchemes(true));
+
+        $regex = '/(([a-zA-Z]*=")*' . $schemeRegex . "[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}([\/a-zA-Z0-9\-._~:?#\[\]@!$&'()*+,;=%\">]*)?)/";
 
         return preg_replace_callback(
             $regex,
-            function ($matches) use ($self, $attribs) {
+            function ($matches) use ($self, $attribs, $linkNoScheme) {
                 preg_match('/[a-zA-Z]*\=\"(.*)/', $matches[0], $inElements);
 
-                if (!$inElements) {
-                    return $self->link($matches[0], $attribs);
+                if ($inElements) {
+                    return $matches[0];
                 }
 
-                return $matches[0];
+                if ($linkNoScheme && strpos($matches[0], '://') === 0) {
+                    return $matches[0];
+                }
+
+                return $self->link($matches[0], $attribs);
             },
             $text
         );
@@ -150,6 +164,12 @@ class Autolink
         }
 
         $attribs['href'] = $this->autoEscape() ? htmlspecialchars($url) : $url;
+
+        if (($scheme = $this->linkNoScheme()) && strpos($attribs['href'], '://') === false) {
+            $scheme = is_string($scheme) ? $scheme : 'http';
+
+            $attribs['href'] = $scheme . '://' . $attribs['href'];
+        }
 
         if ($this->autoTitle()) {
             $attribs['title'] = htmlspecialchars($url);
@@ -244,6 +264,18 @@ class Autolink
     public function autoTitle($value = null)
     {
         return $this->optionAccess('auto_title', $value);
+    }
+
+    /**
+     * linkNoScheme
+     *
+     * @param mixed $value
+     *
+     * @return  mixed|static
+     */
+    public function linkNoScheme($value = null)
+    {
+        return $this->optionAccess('link_no_scheme', $value);
     }
 
     /**
