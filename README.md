@@ -2,6 +2,23 @@
 
 A library to auto convert URLs to links.
 
+## Table of Content
+
+* [Installation via Composer](#installation-via-composer)
+* [Getting Started](#getting-started)
+* [Use Autolink Object](#use-autolink-object)
+* [Convert Text](#convert-text)
+    + [Add Attributes](#add-attributes)
+* [Convert Email](#convert-email)
+* [Options](#options)
+    + [`text_limit`](#-text-limit-)
+    + [`auto_title`](#-auto-title-)
+    + [`strip_scheme`](#-strip-scheme-)
+    + [`escape`](#-escape-)
+    + [`link_no_scheme`](#-link-no-scheme-)
+* [Scheme](#scheme)
+* [Link Builder](#link-builder)
+
 ## Installation via Composer
 
 Add this to composer.json require block.
