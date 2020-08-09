@@ -2,7 +2,7 @@
 /**
  * Part of php-autolink project.
  *
- * @copyright  Copyright (C) 2015 {ORGANIZATION}. All rights reserved.
+ * @copyright  Copyright (C) 2015 LYRASOFT. All rights reserved.
  * @license    GNU General Public License version 2 or later;
  */
 
@@ -235,7 +235,7 @@ class Autolink
      *
      * @return  mixed|static
      *
-     * @since  __DEPLOY_VERSION__
+     * @since  1.1.1
      */
     public function autoEscape($value = null)
     {
