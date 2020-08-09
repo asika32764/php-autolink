@@ -17,12 +17,12 @@
     "minimum-stability": "beta",
     "require": {
         "php": ">=5.3",
-        "windwalker/dom": "~2.0|~3.0"
+        "windwalker/dom": "~2.0||~3.0"
     },
     "require-dev": {
-        "windwalker/test": "~2.0|~3.0",
-        "windwalker/utilities": "~2.0|~3.0",
-        "phpunit/phpunit": "^4.0"
+        "windwalker/test": "~2.0||~3.0",
+        "windwalker/utilities": "~2.0||~3.0",
+        "phpunit/phpunit": "^7.0||^8.0||^9.0"
     },
     "autoload": {
         "psr-4": {
@@ -31,7 +31,7 @@
     },
     "config": {
         "platform": {
-            "php": "5.3.10"
+            "php": "7.1.5"
         }
     },
     "license": "MIT"
