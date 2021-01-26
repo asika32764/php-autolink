@@ -254,7 +254,7 @@ $autolink->setLinkBuilder(function($url, $attribs)
 {
     $attribs['src'] = htmlspecialchars($url);
 
-    return (string) new \Windwalker\Html\HtmlElement('img', null, $attribs);
+    return (string) new \Windwalker\Dom\HtmlElement('img', null, $attribs);
 });
 ```
 
