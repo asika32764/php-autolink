@@ -3,7 +3,7 @@
  * Part of php-autolink project.
  *
  * @copyright  Copyright (C) 2015 LYRASOFT. All rights reserved.
- * @license    GNU General Public License version 2 or later;
+ * @license    MIT; See LICENSE.md
  */
 
 namespace Asika\Autolink;
