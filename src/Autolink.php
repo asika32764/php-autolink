@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Part of php-autolink project.
  *
@@ -7,8 +8,6 @@
  */
 
 namespace Asika\Autolink;
-
-use Windwalker\Dom\HtmlElement;
 
 /**
  * The Autolink class.
@@ -22,25 +21,41 @@ class Autolink
      *
      * @var  array
      */
-    public $options = array(
+    public array $options = [
         'strip_scheme' => false,
         'text_limit' => false,
         'auto_title' => false,
         'escape' => true,
         'link_no_scheme' => false
-    );
+    ];
 
     /**
      * Property schemes.
      *
      * @var  array
      */
-    protected $schemes = array(
+    protected array $schemes = [
         'http',
         'https',
         'ftp',
         'ftps'
-    );
+    ];
+
+    /**
+     * Property defaultParsed.
+     *
+     * @var  array
+     */
+    protected static array $defaultParsed = [
+        'scheme' => null,
+        'user' => null,
+        'pass' => null,
+        'host' => null,
+        'port' => null,
+        'path' => null,
+        'query' => null,
+        'fragment' => null
+    ];
 
     /**
      * Property linkBuilder.
@@ -55,11 +70,11 @@ class Autolink
      * @param array $options Basic options.
      * @param array $schemes
      */
-    public function __construct($options = array(), $schemes = array())
+    public function __construct(array $options = [], array $schemes = [])
     {
         $this->options = array_merge($this->options, (array) $options);
 
-        $this->setSchemes(array_merge($this->schemes, $schemes));
+        $this->setSchemes(...array_merge($this->schemes, $schemes));
     }
 
     /**
@@ -70,10 +85,9 @@ class Autolink
      *
      * @return  string
      */
-    public function convert($text, $attribs = array())
+    public function convert(string $text, array $attribs = []): string
     {
-        $self = $this;
-        $linkNoScheme = $this->linkNoScheme();
+        $linkNoScheme = $this->getLinkNoScheme();
 
         if ($linkNoScheme) {
             $schemeRegex = "[(%s)\:\/\/]*";
@@ -87,18 +101,18 @@ class Autolink
 
         return preg_replace_callback(
             $regex,
-            function ($matches) use ($self, $attribs, $linkNoScheme) {
+            function ($matches) use ($attribs, $linkNoScheme) {
                 preg_match('/[a-zA-Z]*\=\"(.*)/', $matches[0], $inElements);
 
                 if ($inElements) {
                     return $matches[0];
                 }
 
-                if ($linkNoScheme && strpos($matches[0], '://') === 0) {
+                if ($linkNoScheme && str_starts_with($matches[0], '://')) {
                     return $matches[0];
                 }
 
-                return $self->link($matches[0], $attribs);
+                return $this->link($matches[0], $attribs);
             },
             $text
         );
@@ -112,23 +126,21 @@ class Autolink
      *
      * @return  string
      */
-    public function convertEmail($text, $attribs = array())
+    public function convertEmail(string $text, array $attribs = []): string
     {
-        $self = $this;
-
         $regex = "/(([a-zA-Z]*=\")*[a-zA-Z0-9!#$%&'*+-\/=?^_`{|}~:]+@[a-zA-Z0-9!#$%&'*+-\/=?^_`{|}~]+\.[a-zA-Z\">]{2,})/";
 
         return preg_replace_callback(
             $regex,
-            function ($matches) use ($self, $attribs) {
+            function ($matches) use ($attribs) {
                 preg_match('/[a-zA-Z]*\=\"(.*)/', $matches[0], $inElements);
 
                 if (!$inElements) {
-                    $email = $self->autoEscape() ? htmlspecialchars($matches[0]) : $matches[0];
+                    $email = $this->isAutoEscape() ? htmlspecialchars($matches[0]) : $matches[0];
 
                     $attribs['href'] = 'mailto:' . $email;
 
-                    return $self->buildLink($matches[0], $attribs);
+                    return $this->buildLink($matches[0], $attribs);
                 }
 
                 return $matches[0];
@@ -145,33 +157,33 @@ class Autolink
      *
      * @return  string
      */
-    public function link($url, $attribs = array())
+    public function link(string $url, array $attribs = []): string
     {
         $content = $url;
 
-        if ($this->stripScheme()) {
+        if ($this->isStripScheme()) {
             if (preg_match('!^(' . $this->getSchemes(true) . ')://!i', $content, $m)) {
                 $content = substr($content, strlen($m[1]) + 3);
             }
         }
 
-        if ($limit = $this->textLimit()) {
+        if ($limit = $this->getTextLimit()) {
             if (is_callable($limit)) {
-                $content = call_user_func($limit, $content);
+                $content = $limit($content);
             } else {
                 $content = $this->shorten($content, $limit);
             }
         }
 
-        $attribs['href'] = $this->autoEscape() ? htmlspecialchars($url) : $url;
+        $attribs['href'] = $this->isAutoEscape() ? htmlspecialchars($url) : $url;
 
-        if (($scheme = $this->linkNoScheme()) && strpos($attribs['href'], '://') === false) {
+        if (($scheme = $this->getLinkNoScheme()) && !str_contains($attribs['href'], '://')) {
             $scheme = is_string($scheme) ? $scheme : 'http';
 
             $attribs['href'] = $scheme . '://' . $attribs['href'];
         }
 
-        if ($this->autoTitle()) {
+        if ($this->isAutoTitle()) {
             $attribs['title'] = htmlspecialchars($url);
         }
 
@@ -186,13 +198,13 @@ class Autolink
      *
      * @return  string
      */
-    protected function buildLink($url = null, $attribs = array())
+    protected function buildLink(string $url = null, array $attribs = []): string
     {
         if (is_callable($this->linkBuilder)) {
-            return call_user_func($this->linkBuilder, $url, $attribs);
+            return (string) ($this->linkBuilder)($url, $attribs);
         }
 
-        return (string) new HtmlElement('a', htmlspecialchars($url), $attribs);
+        return HtmlBuilder::create('a', $attribs, htmlspecialchars($url));
     }
 
     /**
@@ -203,7 +215,7 @@ class Autolink
      *
      * @return  string
      */
-    public function shorten($text, $limit)
+    public function shorten(string $text, int $limit): string
     {
         if (!$limit) {
             return $text;
@@ -216,30 +228,24 @@ class Autolink
         return $text;
     }
 
-    /**
-     * stripScheme
-     *
-     * @param mixed $value
-     *
-     * @return  mixed|static
-     */
-    public function stripScheme($value = null)
+    public function stripScheme(bool $value = false): static
     {
-        return $this->optionAccess('strip_scheme', $value);
+        return $this->setOption('strip_scheme', $value);
     }
 
-    /**
-     * autoEscape
-     *
-     * @param mixed $value
-     *
-     * @return  mixed|static
-     *
-     * @since  1.1.1
-     */
-    public function autoEscape($value = null)
+    public function isStripScheme(): bool
     {
-        return $this->optionAccess('escape', $value);
+        return $this->getOption('strip_scheme');
+    }
+
+    public function autoEscape(bool $value = true): static
+    {
+        return $this->setOption('escape', $value);
+    }
+
+    public function isAutoEscape(): bool
+    {
+        return $this->getOption('escape');
     }
 
     /**
@@ -247,11 +253,16 @@ class Autolink
      *
      * @param int|callable $value
      *
-     * @return  int|callable|static
+     * @return  static
      */
-    public function textLimit($value = null)
+    public function textLimit(int|callable|null $value = null): static
     {
-        return $this->optionAccess('text_limit', $value);
+        return $this->setOption('text_limit', $value);
+    }
+
+    public function getTextLimit(): int|callable|null
+    {
+        return $this->getOption('text_limit');
     }
 
     /**
@@ -259,23 +270,33 @@ class Autolink
      *
      * @param mixed $value
      *
-     * @return  mixed|static
+     * @return  static
      */
-    public function autoTitle($value = null)
+    public function autoTitle(bool $value = false): static
     {
-        return $this->optionAccess('auto_title', $value);
+        return $this->setOption('auto_title', $value);
+    }
+
+    public function isAutoTitle(): bool
+    {
+        return $this->getOption('auto_title');
     }
 
     /**
      * linkNoScheme
      *
-     * @param mixed $value
+     * @param bool $value
      *
-     * @return  mixed|static
+     * @return  static
      */
-    public function linkNoScheme($value = null)
+    public function linkNoScheme(bool|string $value = false): static
     {
-        return $this->optionAccess('link_no_scheme', $value);
+        return $this->setOption('link_no_scheme', $value);
+    }
+
+    public function getLinkNoScheme(): bool|string
+    {
+        return $this->getOption('link_no_scheme');
     }
 
     /**
@@ -284,33 +305,35 @@ class Autolink
      * @param string $name
      * @param mixed  $value
      *
-     * @return  mixed|static
+     * @return  static
      */
-    protected function optionAccess($name, $value = null)
+    protected function setOption(string $name, mixed $value = null): static
     {
-        if ($value === null) {
-            return isset($this->options[$name]) ? $this->options[$name] : null;
-        }
-
         $this->options[$name] = $value;
 
         return $this;
     }
 
+    protected function getOption(string $name, mixed $default = null): mixed
+    {
+        return $this->options[$name] ?? $default;
+    }
+
     /**
      * addScheme
      *
-     * @param string $scheme
+     * @param string ...$schemes
      *
      * @return  static
      */
-    public function addScheme($scheme)
+    public function addScheme(string ...$schemes): static
     {
-        $scheme = strtolower($scheme);
-
-        if (!in_array($scheme, $this->schemes)) {
+        foreach ($schemes as $scheme) {
+            $scheme = strtolower($scheme);
             $this->schemes[] = $scheme;
         }
+
+        $this->schemes = array_unique($this->schemes);
 
         return $this;
     }
@@ -322,9 +345,9 @@ class Autolink
      *
      * @return  static
      */
-    public function removeScheme($scheme)
+    public function removeScheme(string $scheme): static
     {
-        $index = array_search($scheme, $this->schemes);
+        $index = array_search($scheme, $this->schemes, true);
 
         if ($index !== false) {
             unset($this->schemes[$index]);
@@ -338,7 +361,7 @@ class Autolink
      *
      * @return  array
      */
-    public function getOptions()
+    public function getOptions(): array
     {
         return $this->options;
     }
@@ -350,7 +373,7 @@ class Autolink
      *
      * @return  static  Return self to support chaining.
      */
-    public function setOptions($options)
+    public function setOptions(array $options): static
     {
         $this->options = $options;
 
@@ -364,7 +387,7 @@ class Autolink
      *
      * @return array|string
      */
-    public function getSchemes($regex = false)
+    public function getSchemes(bool $regex = false): array|string
     {
         if ($regex) {
             return implode('|', $this->schemes);
@@ -376,13 +399,13 @@ class Autolink
     /**
      * Method to set property schemes
      *
-     * @param array $schemes
+     * @param string ...$schemes
      *
      * @return  static  Return self to support chaining.
      */
-    public function setSchemes($schemes)
+    public function setSchemes(string ...$schemes): static
     {
-        $schemes = array_unique(array_map('strtolower', (array) $schemes));
+        $schemes = array_unique(array_map('strtolower', $schemes));
 
         $this->schemes = $schemes;
 
@@ -394,7 +417,7 @@ class Autolink
      *
      * @return  callable
      */
-    public function getLinkBuilder()
+    public function getLinkBuilder(): callable
     {
         return $this->linkBuilder;
     }
@@ -406,7 +429,7 @@ class Autolink
      *
      * @return  static  Return self to support chaining.
      */
-    public function setLinkBuilder($linkBuilder)
+    public function setLinkBuilder(callable $linkBuilder): static
     {
         if (!is_callable($linkBuilder)) {
             throw new \InvalidArgumentException('Please use a callable or Closure.');
@@ -415,5 +438,51 @@ class Autolink
         $this->linkBuilder = $linkBuilder;
 
         return $this;
+    }
+
+    /**
+     * shorten
+     *
+     * @param string $url
+     * @param int    $lastPartLimit
+     * @param int    $dots
+     *
+     * @return  string
+     */
+    public static function shortenUrl(string $url, int $lastPartLimit = 15, int $dots = 6): string
+    {
+        $parsed = array_merge(static::$defaultParsed, parse_url($url));
+
+        // @link  http://php.net/manual/en/function.parse-url.php#106731
+        $scheme   = isset($parsed['scheme']) ? $parsed['scheme'] . '://' : '';
+        $host     = $parsed['host'] ?? '';
+        $port     = isset($parsed['port']) ? ':' . $parsed['port'] : '';
+        $user     = $parsed['user'] ?? '';
+        $pass     = isset($parsed['pass']) ? ':' . $parsed['pass'] : '';
+        $pass     = ($user || $pass) ? "$pass@" : '';
+        $path     = $parsed['path'] ?? '';
+        $query    = isset($parsed['query']) ? '?' . $parsed['query'] : '';
+        $fragment = isset($parsed['fragment']) ? '#' . $parsed['fragment'] : '';
+
+        $first = $scheme . $user . $pass . $host . $port . '/';
+
+        $last = $path . $query . $fragment;
+
+        if (!$last) {
+            return $first;
+        }
+
+        if (strlen($last) <= $lastPartLimit) {
+            return $first . $last;
+        }
+
+        $last = explode('/', $last);
+        $last = array_pop($last);
+
+        if (strlen($last) > $lastPartLimit) {
+            $last = '/' . substr($last, 0, $lastPartLimit) . str_repeat('.', $dots);
+        }
+
+        return $first . str_repeat('.', $dots) . $last;
     }
 }

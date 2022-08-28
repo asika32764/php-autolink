@@ -11,20 +11,20 @@ namespace Asika\Autolink;
 /**
  * The Linker class.
  *
- * @method  static string  convert()       convert($url, $sttribs = array())
- * @method  static string  convertEmail()  convertEmail($url, $sttribs = array())
- * @method  static string  link()          link($url, $sttribs = array())
+ * @method  static string  convert()       convert($url, $attribs = [])
+ * @method  static string  convertEmail()  convertEmail($url, $attribs = [])
+ * @method  static string  link()          link($url, $attribs = [])
  *
  * @since  1.0
  */
-class Linker
+class AutolinkStatic
 {
     /**
      * Property instance.
      *
-     * @var  Autolink
+     * @var  Autolink|null
      */
-    protected static $instance;
+    protected static ?Autolink $instance = null;
 
     /**
      * getInstance
@@ -34,13 +34,9 @@ class Linker
      *
      * @return  Autolink
      */
-    public static function getInstance($options = array(), $schemes = array())
+    public static function getInstance(array $options = [], array $schemes = []): Autolink
     {
-        if (static::$instance instanceof Autolink) {
-            return static::$instance;
-        }
-
-        return static::$instance = new Autolink($options, $schemes);
+        return static::$instance ??= new Autolink($options, $schemes);
     }
 
     /**
@@ -50,7 +46,7 @@ class Linker
      *
      * @return  void
      */
-    public static function setInstance($instance)
+    public static function setInstance(Autolink $instance): void
     {
         static::$instance = $instance;
     }
@@ -63,12 +59,12 @@ class Linker
      *
      * @return  mixed
      */
-    public static function __callStatic($name, $args)
+    public static function __callStatic(string $name, array $args): mixed
     {
         $instance = static::getInstance();
 
-        if (is_callable(array($instance, $name))) {
-            return call_user_func_array(array($instance, $name), $args);
+        if (is_callable([$instance, $name])) {
+            return call_user_func_array([$instance, $name], $args);
         }
 
         throw new \BadMethodCallException(sprintf('Method: %s::%s not exists.', 'Autolink', $name));

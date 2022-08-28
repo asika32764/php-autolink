@@ -13,6 +13,11 @@ A library to auto convert URLs to links.
 * [Scheme](#scheme)
 * [Link Builder](#link-builder)
 
+## Requirement
+
+- Version 2.x require PHP 8.0 or higher.
+- Version 1.x supports PHP 5.3 to 7.4
+
 ## Installation via Composer
 
 Add this to composer.json require block.
@@ -20,7 +25,7 @@ Add this to composer.json require block.
 ``` json
 {
     "require": {
-        "asika/autolink": "1.*"
+        "asika/autolink": "^2.0"
     }
 }
 ```
@@ -29,35 +34,35 @@ Add this to composer.json require block.
 
 This is a quick start to convert URL to link:
 
-``` php
-use Asika\Autolink\Linker;
+```php
+use Asika\Autolink\AutolinkStatic;
 
-$text = Linker::convert($text);
-$text = Linker::convertEmail($text);
+$text = AutolinkStatic::convert($text);
+$text = AutolinkStatic::convertEmail($text);
 ```
 
 ## Use Autolink Object
 
 Create the object:
 
-``` php
+```php
 use Asika\Autolink\Autolink;
 
-$autolink = new Autolink;
+$autolink = new Autolink();
 ```
 
 Create with options.
 
-``` php
-$options = array(
+```php
+$options = [
     'strip_scheme' => false,
     'text_limit' => false,
     'auto_title' => false,
     'escape' => true,
     'link_no_scheme' => false
-);
+];
 
-$schemes = array('http', 'https', 'skype', 'itunes');
+$schemes = ['http', 'https', 'skype', 'itunes'];
 
 $autolink = new Autolink($options, $schemes);
 ```
@@ -79,7 +84,7 @@ http://example.com/?foo[1]=a&foo[2]=b
 
 We convert all URLs.
 
-``` php
+```php
 $text = $autolink->convert($text);
 ```
 
@@ -98,13 +103,13 @@ This is URL with multi-level query:
 
 ### Add Attributes
 
-``` php
-$text = $autolink->convert($text, array('class' => 'center'));
+```php
+$text = $autolink->convert($text, ['class' => 'center']);
 ```
 
 All link will add this attributes:
 
-``` php
+```php
 This is Simple URL:
 <a href="http://www.google.com.tw" class="center">http://www.google.com.tw</a>
 
@@ -116,7 +121,7 @@ This is SSL URL:
 
 Email url has no scheme, we use anoter method to convert them, and it will add `mailto:` at begin of `href`.
 
-``` php
+```php
 $text = $aurolink->convertEmail($text);
 ```
 
@@ -133,7 +138,7 @@ Output
 
 We can set this option by constructor or setter:
 
-``` php
+```php
 $auitolink->textLimit(50);
 
 $text = $autolink->convert($text);
@@ -147,19 +152,17 @@ http://campus.asukademy.com/learning/job/84-fin...
 
 Use Your own limit handler by set a callback:
 
-``` php
-$auitolink->textLimit(function($url)
-{
+```php
+$auitolink->textLimit(function($url) {
     return substr($url, 0, 50) . '...';
 });
 ```
 
 Or use `\Asika\Autolink\LinkHelper::shorten()` Pretty handler:
 
-``` php
-$auitolink->textLimit(function($url)
-{
-    return \Asika\Autolink\LinkHelper::shorten($url, 15, 6);
+```php
+$auitolink->textLimit(function($url) {
+    return \Asika\Autolink\Autolink::shortenUrl($url, 15, 6);
 });
 ```
 
@@ -172,8 +175,8 @@ http://campus.asukademy.com/....../84-find-interns......
 ### `auto_title`
 
 Use AutoTitle to force add title on anchor element.
- 
-``` php
+
+```php
 $autolink->autoTitle(true);
 
 $text = $autolink->convert($text);
@@ -189,7 +192,7 @@ Output:
 
 Strip Scheme on link text:
 
-``` php
+```php
 $auitolink->stripScheme(true);
 
 $text = $autolink->convert($text);
@@ -203,9 +206,13 @@ Output
 
 ### `escape`
 
-Strip Scheme on link text:
+Auto escape URL, default is `true`:
 
-``` php
+```php
+$auitolink->autoEscape(false);
+
+$text = $autolink->convert($text);
+
 $auitolink->autoEscape(true);
 
 $text = $autolink->convert($text);
@@ -215,6 +222,7 @@ Output
 
 ``` html
 <a href="http://www.google.com.tw?foo=bar&yoo=baz" >http://www.google.com.tw?foo=bar&yoo=baz</a>
+<a href="http://www.google.com.tw?foo=bar&amp;yoo=baz" >http://www.google.com.tw?foo=bar&amp;yoo=baz</a>
 ```
 
 ### `link_no_scheme`
@@ -222,7 +230,7 @@ Output
 Convert URL which no scheme. If you pass `TRUE` to this option, Autolink will use
 `http` as default scheme, you can also provide your own default scheme.
 
-``` php
+```php
 $auitolink->linkNoScheme('https');
 
 $text = $autolink->convert('www.google.com.tw');
@@ -238,9 +246,8 @@ Output
 
 You can add new scheme to convert URL begin with it, for example: `vnc://example.com`
 
-``` php
-$autolink->addScheme('skype')
-    ->addScheme('vnc');
+```php
+$autolink->addScheme('skype', 'vnc');
 ```
 
 Default schemes is `http, https, ftp, ftps`.
@@ -249,15 +256,10 @@ Default schemes is `http, https, ftp, ftps`.
 
 If you don't want to use `<a>` element as your link, you can set a callback to build link HTML.
 
-``` php
-$autolink->setLinkBuilder(function($url, $attribs)
-{
+```php
+$autolink->setLinkBuilder(function(string $url, array $attribs) {
     $attribs['src'] = htmlspecialchars($url);
 
-    return (string) new \Windwalker\Dom\HtmlElement('img', null, $attribs);
+    return \Asika\Autolink\HtmlBuilder::create('img', $attribs, null);
 });
 ```
-
-See: [Windwalker Dom Package](https://github.com/ventoviro/windwalker-dom)
-
-

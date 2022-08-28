@@ -13,8 +13,10 @@ use Asika\Autolink\Autolink;
  *
  * @since  1.0
  */
-class AutolinkTest extends \Windwalker\Test\TestCase\AbstractBaseTestCase
+class AutolinkTest extends \PHPUnit\Framework\TestCase
 {
+    use \Windwalker\Test\Traits\BaseAssertionTrait;
+
     /**
      * Property instance.
      *
@@ -27,7 +29,7 @@ class AutolinkTest extends \Windwalker\Test\TestCase\AbstractBaseTestCase
      *
      * @return  void
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->instance = new Autolink();
     }
@@ -113,21 +115,21 @@ HTML;
 
         self::assertEquals(
             '<a foo="bar" href="http://www.google.com">http://www.google.com</a>',
-            $this->instance->link($url, array('foo' => 'bar'))
+            $this->instance->link($url, ['foo' => 'bar'])
         );
 
         $this->instance->stripScheme(true);
 
         self::assertEquals(
             '<a foo="bar" href="http://www.google.com">www.google.com</a>',
-            $this->instance->link($url, array('foo' => 'bar'))
+            $this->instance->link($url, ['foo' => 'bar'])
         );
 
         $this->instance->autoTitle(true);
 
         self::assertEquals(
             '<a foo="bar" href="http://www.google.com" title="http://www.google.com">www.google.com</a>',
-            $this->instance->link($url, array('foo' => 'bar'))
+            $this->instance->link($url, ['foo' => 'bar'])
         );
     }
 
@@ -148,7 +150,7 @@ HTML;
         );
 
         $this->instance->textLimit(function ($url) {
-            return \Asika\Autolink\LinkHelper::shorten($url);
+            return \Asika\Autolink\Autolink::shortenUrl($url);
         });
 
         self::assertEquals(
@@ -169,8 +171,8 @@ HTML;
         $this->instance->autoTitle(true);
 
         self::assertEquals(
-            '<a foo="bar" href="http://example.com/path?foo[&quot;1&quot;]=a&amp;foo[\'2\']=b" title="http://example.com/path?foo[&quot;1&quot;]=a&amp;foo[\'2\']=b">http://example.com/path?foo[&quot;1&quot;]=a&amp;foo[\'2\']=b</a>',
-            $this->instance->link($url, array('foo' => 'bar'))
+            '<a foo="bar" href="http://example.com/path?foo[&quot;1&quot;]=a&amp;foo[&#039;2&#039;]=b" title="http://example.com/path?foo[&quot;1&quot;]=a&amp;foo[&#039;2&#039;]=b">http://example.com/path?foo[&quot;1&quot;]=a&amp;foo[&#039;2&#039;]=b</a>',
+            $this->instance->link($url, ['foo' => 'bar'])
         );
     }
 
@@ -246,26 +248,27 @@ HTML;
      */
     public function testGetAndSetScheme()
     {
-        $autolink = new Autolink(array(), array('a', 'b', 'http'));
+        $autolink = new Autolink([], ['a', 'b', 'http']);
 
-        self::assertEquals(array('http', 'https', 'ftp', 'ftps', 'a', 'b'), $autolink->getSchemes());
+        self::assertEquals(['http', 'https', 'ftp', 'ftps', 'a', 'b'], $autolink->getSchemes());
+
         self::assertEquals('http|https|ftp|ftps|a|b', $autolink->getSchemes(true));
 
         $autolink->setSchemes('skype');
 
-        self::assertEquals(array('skype'), $autolink->getSchemes());
+        self::assertEquals(['skype'], $autolink->getSchemes());
 
-        $autolink->setSchemes(array('mailto'));
+        $autolink->setSchemes('mailto');
 
-        self::assertEquals(array('mailto'), $autolink->getSchemes());
+        self::assertEquals(['mailto'], $autolink->getSchemes());
 
-        $autolink->setSchemes(array('mailto', 'mailto'));
+        $autolink->setSchemes('mailto', 'mailto');
 
-        self::assertEquals(array('mailto'), $autolink->getSchemes());
+        self::assertEquals(['mailto'], $autolink->getSchemes());
 
         $autolink->removeScheme('mailto');
 
-        self::assertEquals(array(), $autolink->getSchemes());
+        self::assertEquals([], $autolink->getSchemes());
     }
 
     public function testAutoEscape()
@@ -341,8 +344,59 @@ HTML;
             return $url . json_encode($attribs);
         });
 
-        self::assertEquals('http://google.com{"foo":"bar","href":"http:\/\/google.com"}', $this->instance->link('http://google.com', array('foo' => 'bar')));
+        self::assertEquals('http://google.com{"foo":"bar","href":"http:\/\/google.com"}', $this->instance->link('http://google.com', ['foo' => 'bar']));
 
         self::assertInstanceOf('Closure', $this->instance->getLinkBuilder());
+    }
+
+    /**
+     * urlProvider
+     *
+     * @return  array
+     */
+    public function urlProvider()
+    {
+        return [
+            [
+                'http://www.projectup.net/blog/index.php?option=com_content&view=article&id=15726:-agile-&catid=8:pmp-pm&Itemid=18',
+                'http://www.projectup.net/....../index.php?optio......',
+                15,
+                6
+            ],
+            [
+                'http://campus.asukademy.com/learning/job/84-find-internship-opportunity-through-platform.html',
+                'http://campus.asukademy.com/....../84-find-interns......',
+                15,
+                6
+            ],
+            [
+                'http://user:pass@campus.asukademy.com:8888/learning/job/84-find-internship-opportunity-through-platform.html',
+                'http://user:pass@campus.asukademy.com:8888/....../84-find-interns......',
+                15,
+                6
+            ],
+            [
+                'http://campus.asukademy.com/learning/job/84-find-internship-opportunity-through-platform.html',
+                'http://campus.asukademy.com/.../84-fi...',
+                5,
+                3
+            ]
+        ];
+    }
+
+    /**
+     * testShorten
+     *
+     * @param $url
+     * @param $expect
+     * @param $limit
+     * @param $dots
+     *
+     * @dataProvider  urlProvider
+     *
+     */
+    public function testShortenUrl($url, $expect, $limit, $dots)
+    {
+        self::assertEquals($expect, \Asika\Autolink\Autolink::shortenUrl($url, $limit, $dots));
     }
 }
