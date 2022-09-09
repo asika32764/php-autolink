@@ -11,9 +11,9 @@ namespace Asika\Autolink;
 /**
  * The Linker class.
  *
- * @method  static string  convert($url, $attribs = [])
- * @method  static string  convertEmail($url, $attribs = [])
- * @method  static string  link($url, $attribs = [])
+ * @method  static string  convert(string $url, array $attribs = [])
+ * @method  static string  convertEmail(string $url, array $attribs = [])
+ * @method  static string  link(string $url, array $attribs = [])
  *
  * @since  1.0
  */
