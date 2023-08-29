@@ -310,7 +310,7 @@ This is Email in HTML:
 
 My email address is sakura@flower.com.
 
-and emails are coming in between(sakura@flower.com). 
+and emails are coming in between(sakura@flower.com).
 TEXT;
 
         $html = <<<HTML
