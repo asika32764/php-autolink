@@ -97,7 +97,7 @@ class Autolink
 
         $schemeRegex = sprintf($schemeRegex, $this->getSchemes(true));
 
-        $regex = '/(([a-zA-Z]*=")*' . $schemeRegex . "[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}([\/a-zA-Z0-9\-._~:?#\[\]@!$&'()*+,;=%\">]*)?)/";
+        $regex = '/(([a-zA-Z]*=")*' . $schemeRegex . "[\-\p{L}\p{N}\p{M}]+\.[\p{L}\p{M}]{2,}([\/\p{L}\p{N}\p{M}\-._~:?#\[\]@!$&'()*+,;=%\">]*)?)/u";
 
         return preg_replace_callback(
             $regex,

@@ -62,6 +62,10 @@ http://example.com/path#top
 
 This is URL inline: http://example.com/path#top with test.
 
+This is an IDN URL: http://dømi.fo
+
+This is an IDN URL in Devanagari: http://सार्वभौमिक-स्वीकृति-परीक्षण.संगठन
+
 This is URL in HTML:
 <a href="http://example.com/path?foo[1]=a&foo[2]=b">LINK</a>
 <a href="http://example.com/path?foo[1]=a&foo[2]=b">http://example.com/path?foo[1]=a&foo[2]=b</a>
@@ -91,6 +95,10 @@ This is URL with fragment:
 <a href="http://example.com/path#top">http://example.com/path#top</a>
 
 This is URL inline: <a href="http://example.com/path#top">http://example.com/path#top</a> with test.
+
+This is an IDN URL: <a href="http://dømi.fo">http://dømi.fo</a>
+
+This is an IDN URL in Devanagari: <a href="http://सार्वभौमिक-स्वीकृति-परीक्षण.संगठन">http://सार्वभौमिक-स्वीकृति-परीक्षण.संगठन</a>
 
 This is URL in HTML:
 <a href="http://example.com/path?foo[1]=a&foo[2]=b">LINK</a>
@@ -239,6 +247,15 @@ HTML;
         $this->instance->addScheme('skype');
 
         self::assertEquals('<a href="' . $url . '">' . $url . '</a>', $this->instance->convert($url));
+
+	$url = 'dømi.fo';
+
+        self::assertEquals('<a href="http://' . $url . '">' . $url . '</a>', $this->instance->convert($url));
+
+	$url = 'dømi.fo/dømi';
+
+        self::assertEquals('<a href="http://' . $url . '">' . $url . '</a>', $this->instance->convert($url));
+
     }
 
     /**
