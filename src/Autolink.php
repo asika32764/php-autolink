@@ -90,7 +90,7 @@ class Autolink
         $linkNoScheme = $this->getLinkNoScheme();
 
         if ($linkNoScheme) {
-            $schemeRegex = "[(%s)\:\/\/]*";
+            $schemeRegex = "[(%s)\:\/\/@]*";
         } else {
             $schemeRegex = "(%s)\:\/\/";
         }
@@ -108,7 +108,13 @@ class Autolink
                     return $matches[0];
                 }
 
-                if ($linkNoScheme && str_starts_with($matches[0], '://')) {
+                if (
+                    $linkNoScheme
+                    && (
+                        str_starts_with($matches[0], '://')
+                        || str_starts_with($matches[0], '@')
+                    )
+                ) {
                     return $matches[0];
                 }
 

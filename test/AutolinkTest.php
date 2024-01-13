@@ -248,14 +248,20 @@ HTML;
 
         self::assertEquals('<a href="' . $url . '">' . $url . '</a>', $this->instance->convert($url));
 
-	$url = 'dømi.fo';
+        $url = 'dømi.fo';
 
         self::assertEquals('<a href="http://' . $url . '">' . $url . '</a>', $this->instance->convert($url));
 
-	$url = 'dømi.fo/dømi';
+        $url = 'dømi.fo/dømi';
 
         self::assertEquals('<a href="http://' . $url . '">' . $url . '</a>', $this->instance->convert($url));
+    }
 
+    public function testLinkNoSchemeShouldIgnoreEmail(): void
+    {
+        $url = 'ABC hello@email.com CBA';
+
+        self::assertEquals('ABC hello@email.com CBA', $this->instance->convert($url));
     }
 
     /**
@@ -294,7 +300,10 @@ HTML;
 
         $url = 'https://example.com/?foo=bar&yoo=baz';
 
-        self::assertEquals('<a href="' . htmlspecialchars($url) . '">' . htmlspecialchars($url) . '</a>', $autolink->convert($url));
+        self::assertEquals(
+            '<a href="' . htmlspecialchars($url) . '">' . htmlspecialchars($url) . '</a>',
+            $autolink->convert($url)
+        );
 
         $autolink->autoEscape(false);
 
@@ -304,11 +313,17 @@ HTML;
 
         $autolink->autoEscape(true);
 
-        self::assertEquals('<a href="mailto:' . htmlspecialchars($url) . '">' . htmlspecialchars($url) . '</a>', $autolink->convertEmail($url));
+        self::assertEquals(
+            '<a href="mailto:' . htmlspecialchars($url) . '">' . htmlspecialchars($url) . '</a>',
+            $autolink->convertEmail($url)
+        );
 
         $autolink->autoEscape(false);
 
-        self::assertEquals('<a href="mailto:' . $url . '">' . htmlspecialchars($url) . '</a>', $autolink->convertEmail($url));
+        self::assertEquals(
+            '<a href="mailto:' . $url . '">' . htmlspecialchars($url) . '</a>',
+            $autolink->convertEmail($url)
+        );
     }
 
     public function testConvertEmail()
@@ -361,7 +376,10 @@ HTML;
             return $url . json_encode($attribs);
         });
 
-        self::assertEquals('http://google.com{"foo":"bar","href":"http:\/\/google.com"}', $this->instance->link('http://google.com', ['foo' => 'bar']));
+        self::assertEquals(
+            'http://google.com{"foo":"bar","href":"http:\/\/google.com"}',
+            $this->instance->link('http://google.com', ['foo' => 'bar'])
+        );
 
         self::assertInstanceOf('Closure', $this->instance->getLinkBuilder());
     }
@@ -378,26 +396,26 @@ HTML;
                 'http://www.projectup.net/blog/index.php?option=com_content&view=article&id=15726:-agile-&catid=8:pmp-pm&Itemid=18',
                 'http://www.projectup.net/....../index.php?optio......',
                 15,
-                6
+                6,
             ],
             [
                 'http://campus.asukademy.com/learning/job/84-find-internship-opportunity-through-platform.html',
                 'http://campus.asukademy.com/....../84-find-interns......',
                 15,
-                6
+                6,
             ],
             [
                 'http://user:pass@campus.asukademy.com:8888/learning/job/84-find-internship-opportunity-through-platform.html',
                 'http://user:pass@campus.asukademy.com:8888/....../84-find-interns......',
                 15,
-                6
+                6,
             ],
             [
                 'http://campus.asukademy.com/learning/job/84-find-internship-opportunity-through-platform.html',
                 'http://campus.asukademy.com/.../84-fi...',
                 5,
-                3
-            ]
+                3,
+            ],
         ];
     }
 

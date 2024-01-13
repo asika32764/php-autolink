@@ -4,7 +4,7 @@
  * Part of autolink project.
  *
  * @copyright  Copyright (C) 2022 __ORGANIZATION__.
- * @license    __LICENSE__
+ * @license    LGPL-2.0-or-later
  */
 
 declare(strict_types=1);
