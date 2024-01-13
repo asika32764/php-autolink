@@ -259,6 +259,8 @@ HTML;
 
     public function testLinkNoSchemeShouldIgnoreEmail(): void
     {
+        $this->instance->linkNoScheme('http');
+
         $url = 'ABC hello@email.com CBA';
 
         self::assertEquals('ABC hello@email.com CBA', $this->instance->convert($url));
