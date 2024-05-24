@@ -8,6 +8,8 @@ namespace Asika\Autolink;
  * The LinkHelper class.
  *
  * @since  1.0
+ *
+ * @deprecated
  */
 class LinkHelper
 {
@@ -35,6 +37,8 @@ class LinkHelper
      * @return  string
      *
      * @since  1.1.1
+     *
+     * @deprecated  Use Autolink::shortenUrl() instead.
      */
     public static function shorten(string $url, int $lastPartLimit = 15, int $dots = 6): string
     {

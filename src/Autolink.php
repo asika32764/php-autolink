@@ -18,7 +18,7 @@ class Autolink
      */
     public array $options = [
         'strip_scheme' => false,
-        'text_limit' => false,
+        'text_limit' => null,
         'auto_title' => false,
         'escape' => true,
         'link_no_scheme' => false
@@ -194,12 +194,12 @@ class Autolink
     /**
      * buildLink
      *
-     * @param string $url
-     * @param array  $attribs
+     * @param string|null $url
+     * @param array       $attribs
      *
      * @return  string
      */
-    protected function buildLink(string $url = null, array $attribs = []): string
+    protected function buildLink(?string $url = null, array $attribs = []): string
     {
         if (is_callable($this->linkBuilder)) {
             return (string) ($this->linkBuilder)($url, $attribs);
@@ -236,7 +236,7 @@ class Autolink
 
     public function isStripScheme(): bool
     {
-        return $this->getOption('strip_scheme');
+        return (bool) $this->getOption('strip_scheme');
     }
 
     public function autoEscape(bool $value = true): static
@@ -246,13 +246,11 @@ class Autolink
 
     public function isAutoEscape(): bool
     {
-        return $this->getOption('escape');
+        return (bool) $this->getOption('escape');
     }
 
     /**
-     * textLimit
-     *
-     * @param int|callable $value
+     * @param int|callable|null $value
      *
      * @return  static
      */
@@ -280,7 +278,7 @@ class Autolink
 
     public function isAutoTitle(): bool
     {
-        return $this->getOption('auto_title');
+        return (bool) $this->getOption('auto_title');
     }
 
     /**
@@ -442,8 +440,6 @@ class Autolink
     }
 
     /**
-     * shorten
-     *
      * @param string $url
      * @param int    $lastPartLimit
      * @param int    $dots
