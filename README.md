@@ -139,6 +139,22 @@ Output
 
 ```
 
+## Attributes Escaping
+
+As `htmlspecialchars()` in PHP 8.1 or higher will escape single quote as default, 
+Autolink will also escape single quote even in 8.0. Use this method to keep all escape
+behavior same at any PHP versions:
+
+```php
+$autolink->escape('...');
+```
+
+If you want to change the escape behavior, set your custom escape handler:
+
+```php
+$autolink->setEscapeHandler(fn => ...);
+```
+
 ## Options
 
 ### `text_limit`
