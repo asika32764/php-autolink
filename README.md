@@ -11,14 +11,26 @@ A library to auto convert URLs to links.
 
 ## Table of Content
 
-* [Installation via Composer](#installation-via-composer)
-* [Getting Started](#getting-started)
-* [Use Autolink Object](#use-autolink-object)
-* [Convert Text](#convert-text)
-* [Convert Email](#convert-email)
-* [Options](#options)
-* [Scheme](#scheme)
-* [Link Builder](#link-builder)
+<!-- TOC -->
+* [PHP Autolink Library](#php-autolink-library)
+  * [Table of Content](#table-of-content)
+  * [Requirement](#requirement)
+  * [Installation via Composer](#installation-via-composer)
+  * [Getting Started](#getting-started)
+  * [Use Autolink Object](#use-autolink-object)
+  * [Convert Text](#convert-text)
+    * [Add Attributes](#add-attributes)
+  * [Convert Email](#convert-email)
+  * [Attributes Escaping](#attributes-escaping)
+  * [Options](#options)
+    * [`text_limit`](#text_limit)
+    * [`auto_title`](#auto_title)
+    * [`strip_scheme`](#strip_scheme)
+    * [`escape`](#escape)
+    * [`link_no_scheme`](#link_no_scheme)
+  * [Scheme](#scheme)
+  * [Link Builder](#link-builder)
+<!-- TOC -->
 
 ## Requirement
 
