@@ -21,7 +21,7 @@
     "require-dev": {
         "windwalker/test": "^4.0",
         "windwalker/utilities": "^4.0",
-        "phpunit/phpunit": "^8.0||^9.0||^10.0"
+        "phpunit/phpunit": "^9.0||^10.0||^11.0"
     },
     "scripts": {
         "test": "phpunit"
