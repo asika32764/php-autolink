@@ -185,7 +185,11 @@ class Autolink
         }
 
         if ($this->isAutoTitle()) {
-            $attribs['title'] = htmlspecialchars($url);
+            $attribs['title'] = htmlspecialchars(
+                $url,
+                // PHP 8.1 or higher will escape single quote
+                ENT_QUOTES | ENT_SUBSTITUTE
+            );
         }
 
         return $this->buildLink($content, $attribs);
