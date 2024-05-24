@@ -1,5 +1,12 @@
 # PHP Autolink Library
 
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/asika32764/php-autolink/ci.yml?style=for-the-badge)
+[![Packagist Version](https://img.shields.io/packagist/v/asika/autolink?style=for-the-badge)
+](https://packagist.org/packages/asika/autolink)
+[![Packagist Downloads](https://img.shields.io/packagist/dt/asika/autolink?style=for-the-badge)](https://packagist.org/packages/asika/autolink)
+
+
+
 A library to auto convert URLs to links.
 
 ## Table of Content
