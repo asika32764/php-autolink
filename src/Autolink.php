@@ -59,6 +59,8 @@ class Autolink
      */
     protected $linkBuilder;
 
+    protected ?\Closure $escapeHandler = null;
+
     /**
      * Class init.
      *
@@ -137,7 +139,7 @@ class Autolink
                 preg_match('/[a-zA-Z]*\=\"(.*)/', $matches[0], $inElements);
 
                 if (!$inElements) {
-                    $email = $this->isAutoEscape() ? htmlspecialchars($matches[0]) : $matches[0];
+                    $email = $this->isAutoEscape() ? $this->escape($matches[0]) : $matches[0];
 
                     $attribs['href'] = 'mailto:' . $email;
 
@@ -176,7 +178,7 @@ class Autolink
             }
         }
 
-        $attribs['href'] = $this->isAutoEscape() ? htmlspecialchars($url) : $url;
+        $attribs['href'] = $this->isAutoEscape() ? $this->escape($url) : $url;
 
         if (($scheme = $this->getLinkNoScheme()) && !str_contains($attribs['href'], '://')) {
             $scheme = is_string($scheme) ? $scheme : 'http';
@@ -185,11 +187,7 @@ class Autolink
         }
 
         if ($this->isAutoTitle()) {
-            $attribs['title'] = htmlspecialchars(
-                $url,
-                // PHP 8.1 or higher will escape single quote
-                ENT_QUOTES | ENT_SUBSTITUTE
-            );
+            $attribs['title'] = $this->escape($url);
         }
 
         return $this->buildLink($content, $attribs);
@@ -209,7 +207,7 @@ class Autolink
             return (string) ($this->linkBuilder)($url, $attribs);
         }
 
-        return HtmlBuilder::create('a', $attribs, htmlspecialchars($url));
+        return HtmlBuilder::create('a', $attribs, $this->escape($url));
     }
 
     /**
@@ -485,5 +483,24 @@ class Autolink
         }
 
         return $first . str_repeat('.', $dots) . $last;
+    }
+
+    public function escape(string $str): string
+    {
+        return $this->getEscapeHandler()($str);
+    }
+
+    public function getEscapeHandler(): ?\Closure
+    {
+        return $this->escapeHandler
+            // PHP 8.1 or higher will escape single quite
+            ?? static fn ($str) => htmlspecialchars($str, ENT_QUOTES | ENT_SUBSTITUTE);
+    }
+
+    public function setEscapeHandler(?\Closure $escapeHandler): static
+    {
+        $this->escapeHandler = $escapeHandler;
+
+        return $this;
     }
 }
