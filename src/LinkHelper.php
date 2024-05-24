@@ -1,10 +1,6 @@
 <?php
-/**
- * Part of php-autolink project.
- *
- * @copyright  Copyright (C) 2015 LYRASOFT. All rights reserved.
- * @license    MIT; See LICENSE.md
- */
+
+declare(strict_types=1);
 
 namespace Asika\Autolink;
 
@@ -20,7 +16,7 @@ class LinkHelper
      *
      * @var  array
      */
-    protected static $defaultParsed = array(
+    protected static array $defaultParsed = [
         'scheme' => null,
         'user' => null,
         'pass' => null,
@@ -29,11 +25,9 @@ class LinkHelper
         'path' => null,
         'query' => null,
         'fragment' => null
-    );
+    ];
 
     /**
-     * shorten
-     *
      * @param string $url
      * @param int    $lastPartLimit
      * @param int    $dots
@@ -42,7 +36,7 @@ class LinkHelper
      *
      * @since  1.1.1
      */
-    public static function shorten($url, $lastPartLimit = 15, $dots = 6)
+    public static function shorten(string $url, int $lastPartLimit = 15, int $dots = 6): string
     {
         $parsed = array_merge(static::$defaultParsed, parse_url($url));
 

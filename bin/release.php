@@ -148,7 +148,7 @@ HELP;
 
             $content = str_replace(
                 ['{DEPLOY_VERSION}', '__DEPLOY_VERSION__', '__LICENSE__', '${ORGANIZATION}', '{ORGANIZATION}'],
-                [$version, $version, 'LGPL-2.0-or-later', 'LYRASOFT', 'LYRASOFT'],
+                [$version, $version, 'MIT License', 'LYRASOFT', 'LYRASOFT'],
                 $content
             );
 

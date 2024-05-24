@@ -1,11 +1,6 @@
 <?php
 
-/**
- * Part of php-autolink project.
- *
- * @copyright  Copyright (C) 2015 LYRASOFT. All rights reserved.
- * @license    MIT; See LICENSE.md
- */
+declare(strict_types=1);
 
 namespace Asika\Autolink;
 
