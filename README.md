@@ -141,7 +141,7 @@ This is SSL URL:
 Email url has no scheme, we use anoter method to convert them, and it will add `mailto:` at begin of `href`.
 
 ```php
-$text = $aurolink->convertEmail($text);
+$text = $autolink->convertEmail($text);
 ```
 
 Output
