@@ -32,9 +32,6 @@
         }
     },
     "config": {
-        "platform": {
-            "php": "8.0.5"
-        }
     },
     "license": "MIT"
 }
