@@ -407,6 +407,38 @@ HTML;
         );
     }
 
+    public function testLocalhost(): void
+    {
+        $txt = 'Link to http://localhost with some text.';
+
+        $html = $this->instance->convert($txt);
+
+        assertEquals(
+            'Link to <a href="http://localhost">http://localhost</a> with some text.',
+            $html,
+        );
+
+        $txt = 'Link to http://localhost.';
+
+        $html = $this->instance->convert($txt);
+
+        assertEquals(
+            'Link to <a href="http://localhost">http://localhost</a>.',
+            $html,
+        );
+
+        // Localhost without scheme should be ignored.
+        $txt = 'Link to localhost.';
+
+        $this->instance->linkNoScheme(true);
+        $html = $this->instance->convert($txt);
+
+        assertEquals(
+            'Link to localhost.',
+            $html,
+        );
+    }
+
     /**
      * urlProvider
      *

@@ -85,16 +85,18 @@ class Autolink
     public function convert(string $text, array $attribs = []): string
     {
         $linkNoScheme = $this->getLinkNoScheme();
+        $staticDomains = '|localhost';
 
         if ($linkNoScheme) {
             $schemeRegex = "[(%s)\:\/\/@]*";
+            $staticDomains = '';
         } else {
             $schemeRegex = "(%s)\:\/\/";
         }
 
         $schemeRegex = sprintf($schemeRegex, $this->getSchemes(true));
 
-        $regex = '/(([a-zA-Z]*=")*' . $schemeRegex . "[\-\p{L}\p{N}\p{M}]+\.[\p{L}\p{M}]{2,}([\/\p{L}\p{N}\p{M}\-._~:?#\[\]@!$&'()*+,;=%\">]*)?)/u";
+        $regex = '/(([a-zA-Z]*=")*' . $schemeRegex . "([\-\p{L}\p{N}\p{M}]+\.[\p{L}\p{M}]{2,}$staticDomains)([\/\p{L}\p{N}\p{M}\-._~:?#\[\]@!$&'()*+,;=%\">]*)?)/u";
 
         return preg_replace_callback(
             $regex,
