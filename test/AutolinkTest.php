@@ -6,6 +6,7 @@ use Asika\Autolink\Autolink;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Windwalker\Test\Traits\BaseAssertionTrait;
+use function PHPUnit\Framework\assertEquals;
 
 /**
  * The AutolinkTest class.
@@ -157,7 +158,7 @@ HTML;
         );
 
         $this->instance->textLimit(function ($url) {
-            return \Asika\Autolink\Autolink::shortenUrl($url);
+            return Autolink::shortenUrl($url);
         });
 
         self::assertEquals(
@@ -385,6 +386,27 @@ HTML;
         self::assertInstanceOf('Closure', $this->instance->getLinkBuilder());
     }
 
+    public function testIgnoreTrailingDot(): void
+    {
+        $txt = 'Link to https://google.com.';
+
+        $html = $this->instance->convert($txt);
+
+        assertEquals(
+            'Link to <a href="https://google.com">https://google.com</a>.',
+            $html,
+        );
+
+        $txt = 'Link to https://google.com/search?foo=yoo.';
+
+        $html = $this->instance->convert($txt);
+
+        assertEquals(
+            'Link to <a href="https://google.com/search?foo=yoo">https://google.com/search?foo=yoo</a>.',
+            $html,
+        );
+    }
+
     /**
      * urlProvider
      *
@@ -431,6 +453,6 @@ HTML;
     #[DataProvider('urlProvider')]
     public function testShortenUrl($url, $expect, $limit, $dots)
     {
-        self::assertEquals($expect, \Asika\Autolink\Autolink::shortenUrl($url, $limit, $dots));
+        self::assertEquals($expect, Autolink::shortenUrl($url, $limit, $dots));
     }
 }

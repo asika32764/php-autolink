@@ -99,23 +99,32 @@ class Autolink
         return preg_replace_callback(
             $regex,
             function ($matches) use ($attribs, $linkNoScheme) {
-                preg_match('/[a-zA-Z]*\=\"(.*)/', $matches[0], $inElements);
+                $url = $matches[0];
+
+                preg_match('/[a-zA-Z]*\=\"(.*)/', $url, $inElements);
 
                 if ($inElements) {
-                    return $matches[0];
+                    return $url;
                 }
 
                 if (
                     $linkNoScheme
                     && (
-                        str_starts_with($matches[0], '://')
-                        || str_starts_with($matches[0], '@')
+                        str_starts_with($url, '://')
+                        || str_starts_with($url, '@')
                     )
                 ) {
-                    return $matches[0];
+                    return $url;
                 }
 
-                return $this->link($matches[0], $attribs);
+                $suffix = '';
+
+                if (str_ends_with($url, '.')) {
+                    $suffix = '.';
+                    $url = substr($url, 0, -1);
+                }
+
+                return $this->link($url, $attribs) . $suffix;
             },
             $text
         );
