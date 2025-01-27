@@ -33,7 +33,7 @@
     },
     "config": {
         "platform": {
-            "php": "8.0.5"
+            "php": "8.2"
         }
     },
     "license": "MIT"

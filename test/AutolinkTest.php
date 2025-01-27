@@ -1,21 +1,20 @@
 <?php
-/**
- * Part of php-autolink project.
- *
- * @copyright  Copyright (C) 2015 {ORGANIZATION}. All rights reserved.
- * @license    GNU General Public License version 2 or later;
- */
+
+declare(strict_types=1);
 
 use Asika\Autolink\Autolink;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\TestCase;
+use Windwalker\Test\Traits\BaseAssertionTrait;
 
 /**
  * The AutolinkTest class.
  *
  * @since  1.0
  */
-class AutolinkTest extends \PHPUnit\Framework\TestCase
+class AutolinkTest extends TestCase
 {
-    use \Windwalker\Test\Traits\BaseAssertionTrait;
+    use BaseAssertionTrait;
 
     /**
      * Property instance.
@@ -391,7 +390,7 @@ HTML;
      *
      * @return  array
      */
-    public function urlProvider()
+    public static function urlProvider()
     {
         return [
             [
@@ -428,10 +427,8 @@ HTML;
      * @param $expect
      * @param $limit
      * @param $dots
-     *
-     * @dataProvider  urlProvider
-     *
      */
+    #[DataProvider('urlProvider')]
     public function testShortenUrl($url, $expect, $limit, $dots)
     {
         self::assertEquals($expect, \Asika\Autolink\Autolink::shortenUrl($url, $limit, $dots));
