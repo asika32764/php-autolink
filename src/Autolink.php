@@ -263,7 +263,14 @@ class Autolink
 
     public function getTextLimit(): int|callable|null
     {
-        return $this->getOption('text_limit');
+        $value = $this->getOption('text_limit');
+
+        // Fix for B/C
+        if ($value === false) {
+            $value = null;
+        }
+
+        return $value;
     }
 
     /**

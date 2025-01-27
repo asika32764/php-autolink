@@ -75,7 +75,7 @@ Create with options.
 ```php
 $options = [
     'strip_scheme' => false,
-    'text_limit' => false,
+    'text_limit' => null,
     'auto_title' => false,
     'escape' => true,
     'link_no_scheme' => false
