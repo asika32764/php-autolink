@@ -141,7 +141,7 @@ This is SSL URL:
 Email url has no scheme, we use anoter method to convert them, and it will add `mailto:` at begin of `href`.
 
 ```php
-$text = $aurolink->convertEmail($text);
+$text = $autolink->convertEmail($text);
 ```
 
 Output
@@ -153,7 +153,7 @@ Output
 
 ## Attributes Escaping
 
-As `htmlspecialchars()` in PHP 8.1 or higher will escape single quote as default, 
+As `htmlspecialchars()` in PHP 8.1 or higher will escape single quote as default,
 Autolink will also escape single quote even in 8.0. Use this method to keep all escape
 behavior same at any PHP versions:
 
@@ -174,7 +174,7 @@ $autolink->setEscapeHandler(fn => ...);
 We can set this option by constructor or setter:
 
 ```php
-$auitolink->textLimit(50);
+$autolink->textLimit(50);
 
 $text = $autolink->convert($text);
 ```
@@ -188,7 +188,7 @@ http://campus.asukademy.com/learning/job/84-fin...
 Use Your own limit handler by set a callback:
 
 ```php
-$auitolink->textLimit(function($url) {
+$autolink->textLimit(function($url) {
     return substr($url, 0, 50) . '...';
 });
 ```
@@ -196,7 +196,7 @@ $auitolink->textLimit(function($url) {
 Or use `\Asika\Autolink\LinkHelper::shorten()` Pretty handler:
 
 ```php
-$auitolink->textLimit(function($url) {
+$autolink->textLimit(function($url) {
     return \Asika\Autolink\Autolink::shortenUrl($url, 15, 6);
 });
 ```
@@ -228,7 +228,7 @@ Output:
 Strip Scheme on link text:
 
 ```php
-$auitolink->stripScheme(true);
+$autolink->stripScheme(true);
 
 $text = $autolink->convert($text);
 ```
@@ -244,11 +244,11 @@ Output
 Auto escape URL, default is `true`:
 
 ```php
-$auitolink->autoEscape(false);
+$autolink->autoEscape(false);
 
 $text = $autolink->convert($text);
 
-$auitolink->autoEscape(true);
+$autolink->autoEscape(true);
 
 $text = $autolink->convert($text);
 ```
@@ -266,7 +266,7 @@ Convert URL which no scheme. If you pass `TRUE` to this option, Autolink will us
 `http` as default scheme, you can also provide your own default scheme.
 
 ```php
-$auitolink->linkNoScheme('https');
+$autolink->linkNoScheme('https');
 
 $text = $autolink->convert('www.google.com.tw');
 ```
