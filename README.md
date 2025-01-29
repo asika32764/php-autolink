@@ -34,7 +34,8 @@ A library to auto convert URLs to links.
 
 ## Requirement
 
-- Version 2.x require PHP 8.0 or higher.
+- Version 2.1.x require PHP 8.2 or higher.
+- Version 2.0.x require PHP 8.0 or higher.
 - Version 1.x supports PHP 5.3 to 7.4
 
 ## Installation via Composer
