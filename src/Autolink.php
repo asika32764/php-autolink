@@ -126,6 +126,11 @@ class Autolink
                     $url = substr($url, 0, -1);
                 }
 
+                if (str_ends_with($url, ')')) {
+                    $suffix = ')';
+                    $url = substr($url, 0, -1);
+                }
+
                 return $this->link($url, $attribs) . $suffix;
             },
             $text
