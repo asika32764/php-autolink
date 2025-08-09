@@ -1,53 +1,63 @@
 <?php
-/**
- * Part of cli project.
- *
- * @copyright  Copyright (C) 2019 ${ORGANIZATION}.
- * @license    __LICENSE__
- */
 
-// phpcs:disable
+declare(strict_types=1);
+
+namespace App;
 
 use Asika\SimpleConsole\Console;
+use Asika\SimpleConsole\ExecResult;
 
-include_once __DIR__ . '/Console.php';
+require __DIR__ . '/Console.php';
 
-class Build extends Console
+$app = new class () extends Console
 {
-    /**
-     * Property help.
-     *
-     * @var  string
-     */
-    protected $help = <<<HELP
-[Usage] php release.php <version> <next_version>
+    protected array $scripts = [];
 
-[Options]
-    h | help   Show help information
-    v          Show more debug information.
-    --dry-run  Dry run without git push or commit.
-HELP;
+    protected bool $isDryRun {
+        get {
+            return (bool) $this->get('dry-run');
+        }
+    }
 
-    /**
-     * doExecute
-     *
-     * @return  bool|mixed
-     *
-     * @since  __DEPLOY_VERSION__
-     */
-    protected function doExecute()
+    protected function configure(): void
     {
-        $currentVersion = trim(file_get_contents(__DIR__ . '/../VERSION'));
-        $targetVersion = $this->getArgument(0);
+        $this->addParameter('version', type: static::STRING)
+            ->description('Can be <version> name or major|minor|patch|alpha|beta|rc')
+            ->default('patch');
 
-        if (!$targetVersion) {
-            $targetVersion = static::versionPlus($currentVersion, 1);
+        $this->addParameter('suffix', type: static::STRING)
+            ->description('The suffix type. Can be alpha|beta|rc');
+
+        $this->addParameter('--dry-run|-d', type: static::BOOLEAN)
+            ->description('Run process but do not execute any commands.');
+
+        $this->addParameter('--from', type: static::STRING)
+            ->description('The version to release from. Default is the current version.')
+            ->required(true);
+    }
+
+    protected function doExecute(): int
+    {
+        foreach ($this->scripts as $script) {
+            $this->exec($script);
         }
 
-        $this->out('Release version: ' . $targetVersion);
+        $currentVersion = $this->get('from') ?: trim(file_get_contents(__DIR__ . '/../VERSION'));
+        $targetVersion = (string) $this->get('version');
+        $targetSuffix = (string) $this->get('suffix');
 
-        static::writeVersion($targetVersion);
-        $this->replaceDocblockTags($targetVersion);
+        if (in_array($targetVersion, ['alpha', 'beta', 'rc'])) {
+            $targetSuffix = $targetVersion;
+            $targetVersion = 'patch';
+        }
+
+        $targetVersion = static::versionPush($currentVersion, $targetVersion, $targetSuffix);
+
+        $this->writeln('Release version: ' . $targetVersion);
+
+        if (!$this->isDryRun) {
+            static::writeVersion($targetVersion);
+        }
 
         $this->exec(sprintf('git commit -am "Release version: %s"', $targetVersion));
         $this->exec(sprintf('git tag %s', $targetVersion));
@@ -55,128 +65,121 @@ HELP;
         $this->exec('git push');
         $this->exec('git push --tags');
 
-        return true;
+        return static::SUCCESS;
     }
 
-    /**
-     * writeVersion
-     *
-     * @param string $version
-     *
-     * @return  bool|int
-     *
-     * @since  __DEPLOY_VERSION__
-     */
-    protected static function writeVersion(string $version)
+    protected static function writeVersion(string $version): false|int
     {
         return file_put_contents(static::versionFile(), $version . "\n");
     }
 
-    /**
-     * versionFile
-     *
-     * @return  string
-     *
-     * @since  __DEPLOY_VERSION__
-     */
     protected static function versionFile(): string
     {
         return __DIR__ . '/../VERSION';
     }
 
-    /**
-     * versionPlus
-     *
-     * @param string $version
-     * @param int    $offset
-     * @param string $suffix
-     *
-     * @return  string
-     *
-     * @since  __DEPLOY_VERSION__
-     */
-    protected static function versionPlus(string $version, int $offset, string $suffix = ''): string
-    {
-        [$version] = explode('-', $version, 2);
+    protected static function versionPush(
+        string $currentVersion,
+        string $targetVersion,
+        string $targetSuffix,
+    ): string {
+        [$major, $minor, $patch, $suffixType, $suffixVersion] = static::parseVersion($currentVersion);
 
-        $numbers = explode('.', $version);
+        switch ($targetVersion) {
+            case 'major':
+                $major++;
+                $minor = $patch = 0;
+                if ($targetSuffix) {
+                    $suffixType = $targetSuffix;
+                    $suffixVersion = 1;
+                } else {
+                    $suffixType = '';
+                    $suffixVersion = 0;
+                }
+                break;
 
-        if (!isset($numbers[2])) {
-            $numbers[2] = 0;
+            case 'minor':
+                $minor++;
+                $patch = 0;
+                if ($targetSuffix) {
+                    $suffixType = $targetSuffix;
+                    $suffixVersion = 1;
+                } else {
+                    $suffixType = '';
+                    $suffixVersion = 0;
+                }
+                break;
+
+            case 'patch':
+                if (!$suffixType) {
+                    $patch++;
+                }
+                if ($targetSuffix) {
+                    if ($suffixType === $targetSuffix) {
+                        $suffixVersion++;
+                    } else {
+                        $suffixType = $targetSuffix;
+                        $suffixVersion = 1;
+                    }
+                } else {
+                    $suffixType = '';
+                    $suffixVersion = 0;
+                }
+                break;
+
+            default:
+                return $targetVersion;
         }
 
-        $numbers[2] += $offset;
+        $currentVersion = $major . '.' . $minor . '.' . $patch;
 
-        if ($numbers[2] === 0) {
-            unset($numbers[2]);
+        if ($suffixType) {
+            $currentVersion .= '-' . $suffixType . '.' . $suffixVersion;
         }
 
-        $version = implode('.', $numbers);
-
-        if ($suffix) {
-            $version .= '-' . $suffix;
-        }
-
-        return $version;
+        return $currentVersion;
     }
 
-    /**
-     * replaceDocblockTags
-     *
-     * @param string $version
-     *
-     * @return  void
-     */
-    protected function replaceDocblockTags(string $version): void
+    public static function parseVersion(string $currentVersion): array
     {
-        $this->out('Replacing Docblock...');
+        [$currentVersion, $prerelease] = explode('-', $currentVersion, 2) + ['', ''];
 
-        $files = new RecursiveIteratorIterator(
-            new \RecursiveDirectoryIterator(
-                __DIR__ . '/../src',
-                \FilesystemIterator::SKIP_DOTS
-            )
-        );
+        [$major, $minor, $patch] = explode('.', $currentVersion, 3) + ['', '0', '0'];
+        $major = (int) $major;
+        $minor = (int) $minor;
+        $patch = (int) $patch;
+        $prereleaseType = '';
+        $prereleaseVersion = 0;
 
-        /** @var \SplFileInfo $file */
-        foreach ($files as $file) {
-            if ($file->isDir() || $file->getExtension() !== 'php') {
-                continue;
+        if ($prerelease) {
+            $matched = preg_match('/(rc|beta|alpha)[.-]?(\d+)/i', $prerelease, $matches);
+
+            if ($matched) {
+                $prereleaseType = strtolower($matches[1]);
+                $prereleaseVersion = (int) $matches[2];
             }
-
-            $content = file_get_contents($file->getPathname());
-
-            $content = str_replace(
-                ['{DEPLOY_VERSION}', '__DEPLOY_VERSION__', '__LICENSE__', '${ORGANIZATION}', '{ORGANIZATION}'],
-                [$version, $version, 'MIT License', 'LYRASOFT', 'LYRASOFT'],
-                $content
-            );
-
-            file_put_contents($file->getPathname(), $content);
         }
 
-        $this->exec('git checkout master');
-        $this->exec(sprintf('git commit -am "Prepare for %s release."', $version));
-        $this->exec('git push origin master');
+        return [$major, $minor, $patch, $prereleaseType, $prereleaseVersion];
     }
 
-    /**
-     * exec
-     *
-     * @param   string $command
-     *
-     * @return  static
-     */
-    protected function exec($command)
+    public function exec(string $cmd, \Closure|null|false $output = null, bool $showCmd = true): ExecResult
     {
-        $this->out('>> ' . $command);
+        $this->writeln('>> ' . ($this->isDryRun ? '(Dry Run) ' : '') . $cmd);
 
-        if (!$this->getOption('dry-run')) {
-            system($command);
+        if (!$this->isDryRun) {
+            return parent::exec($cmd, $output, false);
         }
+
+        return new ExecResult();
+    }
+
+    public function addScript(string $script): static
+    {
+        $this->scripts[] = $script;
 
         return $this;
     }
-}
+};
 
-exit((new Build())->execute());
+$app->execute();
