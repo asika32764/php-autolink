@@ -11,18 +11,7 @@ namespace Asika\Autolink;
  */
 class Autolink
 {
-    /**
-     * Property options.
-     *
-     * @var  array
-     */
-    public array $options = [
-        'strip_scheme' => false,
-        'text_limit' => null,
-        'auto_title' => false,
-        'escape' => true,
-        'link_no_scheme' => false
-    ];
+    public AutolinkOptions $options;
 
     /**
      * Property schemes.
@@ -64,12 +53,12 @@ class Autolink
     /**
      * Class init.
      *
-     * @param array $options Basic options.
-     * @param array $schemes
+     * @param  AutolinkOptions|array  $options  Basic options.
+     * @param  array                  $schemes
      */
-    public function __construct(array $options = [], array $schemes = [])
+    public function __construct(AutolinkOptions|array $options = [], array $schemes = [])
     {
-        $this->options = array_merge($this->options, (array) $options);
+        $this->setOptions($options);
 
         $this->setSchemes(...array_merge($this->schemes, $schemes));
     }
@@ -254,22 +243,26 @@ class Autolink
 
     public function stripScheme(bool $value = false): static
     {
-        return $this->setOption('strip_scheme', $value);
+        $this->options->stripScheme = $value;
+
+        return $this;
     }
 
     public function isStripScheme(): bool
     {
-        return (bool) $this->getOption('strip_scheme');
+        return $this->options->stripScheme;
     }
 
     public function autoEscape(bool $value = true): static
     {
-        return $this->setOption('escape', $value);
+        $this->options->escape = $value;
+
+        return $this;
     }
 
     public function isAutoEscape(): bool
     {
-        return (bool) $this->getOption('escape');
+        return (bool) $this->options->escape;
     }
 
     /**
@@ -279,12 +272,18 @@ class Autolink
      */
     public function textLimit(int|callable|null $value = null): static
     {
-        return $this->setOption('text_limit', $value);
+        if (is_callable($value)) {
+            $value = $value(...);
+        }
+
+        $this->options->textLimit = $value;
+
+        return $this;
     }
 
     public function getTextLimit(): int|callable|null
     {
-        $value = $this->getOption('text_limit');
+        $value = $this->options->textLimit;
 
         // Fix for B/C
         if ($value === false) {
@@ -294,21 +293,16 @@ class Autolink
         return $value;
     }
 
-    /**
-     * autoTitle
-     *
-     * @param mixed $value
-     *
-     * @return  static
-     */
     public function autoTitle(bool $value = false): static
     {
-        return $this->setOption('auto_title', $value);
+        $this->options->autoTitle = $value;
+
+        return $this;
     }
 
     public function isAutoTitle(): bool
     {
-        return (bool) $this->getOption('auto_title');
+        return $this->options->autoTitle;
     }
 
     /**
@@ -320,12 +314,14 @@ class Autolink
      */
     public function linkNoScheme(bool|string $value = false): static
     {
-        return $this->setOption('link_no_scheme', $value);
+        $this->options->linkNoScheme = $value;
+
+        return $this;
     }
 
     public function getLinkNoScheme(): bool|string
     {
-        return $this->getOption('link_no_scheme');
+        return $this->options->linkNoScheme;
     }
 
     /**
@@ -335,22 +331,34 @@ class Autolink
      * @param mixed  $value
      *
      * @return  static
+     *
+     * @deprecated  Use {@see AutolinkOptions} instead.
      */
     protected function setOption(string $name, mixed $value = null): static
     {
-        $this->options[$name] = $value;
+        $name = AutolinkOptions::mapOptionKey($name);
+
+        $this->options->$name = $value;
 
         return $this;
     }
 
+    /**
+     * @param  string      $name
+     * @param  mixed|null  $default
+     *
+     * @return  mixed
+     *
+     * @deprecated  Use {@see AutolinkOptions} instead.
+     */
     protected function getOption(string $name, mixed $default = null): mixed
     {
-        return $this->options[$name] ?? $default;
+        $name = AutolinkOptions::mapOptionKey($name);
+
+        return $this->options->$name ?? $default;
     }
 
     /**
-     * addScheme
-     *
      * @param string ...$schemes
      *
      * @return  static
@@ -368,8 +376,6 @@ class Autolink
     }
 
     /**
-     * removeScheme
-     *
      * @param string $scheme
      *
      * @return  static
@@ -385,12 +391,7 @@ class Autolink
         return $this;
     }
 
-    /**
-     * Method to get property Options
-     *
-     * @return  array
-     */
-    public function getOptions(): array
+    public function getOptions(): AutolinkOptions
     {
         return $this->options;
     }
@@ -398,13 +399,13 @@ class Autolink
     /**
      * Method to set property options
      *
-     * @param array $options
+     * @param  AutolinkOptions|array  $options
      *
      * @return  static  Return self to support chaining.
      */
-    public function setOptions(array $options): static
+    public function setOptions(AutolinkOptions|array $options): static
     {
-        $this->options = $options;
+        $this->options = AutolinkOptions::wrap($options);
 
         return $this;
     }

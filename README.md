@@ -5,8 +5,6 @@
 ](https://packagist.org/packages/asika/autolink)
 [![Packagist Downloads](https://img.shields.io/packagist/dt/asika/autolink?style=for-the-badge)](https://packagist.org/packages/asika/autolink)
 
-
-
 A library to auto convert URLs to links.
 
 ## Table of Content
@@ -23,11 +21,11 @@ A library to auto convert URLs to links.
   * [Convert Email](#convert-email)
   * [Attributes Escaping](#attributes-escaping)
   * [Options](#options)
-    * [`text_limit`](#text_limit)
-    * [`auto_title`](#auto_title)
-    * [`strip_scheme`](#strip_scheme)
+    * [`textLimit`](#textlimit)
+    * [`autoTitle`](#autotitle)
+    * [`stripScheme`](#stripscheme)
     * [`escape`](#escape)
-    * [`link_no_scheme`](#link_no_scheme)
+    * [`linkNoScheme`](#linknoscheme)
   * [Scheme](#scheme)
   * [Link Builder](#link-builder)
 <!-- TOC -->
@@ -74,13 +72,15 @@ $autolink = new Autolink();
 Create with options.
 
 ```php
-$options = [
-    'strip_scheme' => false,
-    'text_limit' => null,
-    'auto_title' => false,
-    'escape' => true,
-    'link_no_scheme' => false
-];
+use Asika\Autolink\AutolinkOptions;
+
+$options = new AutolinkOptions(
+    stripScheme: false,
+    textLimit: null,
+    autoTitle: false,
+    escape: true,
+    linkNoScheme: false
+);
 
 $schemes = ['http', 'https', 'skype', 'itunes'];
 
@@ -170,7 +170,7 @@ $autolink->setEscapeHandler(fn => ...);
 
 ## Options
 
-### `text_limit`
+### `textLimit`
 
 We can set this option by constructor or setter:
 
@@ -208,7 +208,7 @@ Output:
 http://campus.asukademy.com/....../84-find-interns......
 ```
 
-### `auto_title`
+### `autoTitle`
 
 Use AutoTitle to force add title on anchor element.
 
@@ -224,7 +224,7 @@ Output:
 <a href="http://www.google.com.tw" title="http://www.google.com.tw">http://www.google.com.tw</a>
 ```
 
-### `strip_scheme`
+### `stripScheme`
 
 Strip Scheme on link text:
 
@@ -261,7 +261,7 @@ Output
 <a href="http://www.google.com.tw?foo=bar&amp;yoo=baz" >http://www.google.com.tw?foo=bar&amp;yoo=baz</a>
 ```
 
-### `link_no_scheme`
+### `linkNoScheme`
 
 Convert URL which no scheme. If you pass `TRUE` to this option, Autolink will use
 `http` as default scheme, you can also provide your own default scheme.
