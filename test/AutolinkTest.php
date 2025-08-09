@@ -439,6 +439,18 @@ HTML;
         );
     }
 
+    public function testTrailingParenthesis(): void
+    {
+        $txt = 'Link to (https://google.com) with some text.';
+
+        $html = $this->instance->convert($txt);
+
+        assertEquals(
+            'Link to (<a href="https://google.com">https://google.com</a>) with some text.',
+            $html,
+        );
+    }
+
     /**
      * urlProvider
      *
