@@ -339,6 +339,7 @@ This is Email inline: sakura@flower.com with test.
 This is Email in HTML:
 <a href="sakura@flower.com">LINK</a>
 <a href="mailto:sakura@flower.com">sakura@flower.com</a>
+<a href="mailto:sakura.dot@flower.com">sakura.dot@flower.com</a>
 <div data-target="sakura@flower.com" wdith="100"/></div>
 <div data-target="mailto:sakura@flower.com" wdith="100"/></div>
 
@@ -356,6 +357,7 @@ This is Email inline: <a href="mailto:sakura@flower.com">sakura@flower.com</a> w
 This is Email in HTML:
 <a href="sakura@flower.com">LINK</a>
 <a href="mailto:sakura@flower.com">sakura@flower.com</a>
+<a href="mailto:sakura.dot@flower.com">sakura.dot@flower.com</a>
 <div data-target="sakura@flower.com" wdith="100"/></div>
 <div data-target="mailto:sakura@flower.com" wdith="100"/></div>
 

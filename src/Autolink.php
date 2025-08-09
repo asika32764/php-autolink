@@ -152,6 +152,11 @@ class Autolink
         return preg_replace_callback(
             $regex,
             function ($matches) use ($attribs) {
+                // Email should not start with a dot.
+                if (str_starts_with($matches[0], '.')) {
+                    return $matches[0];
+                }
+
                 preg_match('/[a-zA-Z]*\=\"(.*)/', $matches[0], $inElements);
 
                 if (!$inElements) {
