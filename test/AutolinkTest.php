@@ -453,6 +453,20 @@ HTML;
         );
     }
 
+    public function testIgnoreImages(): void
+    {
+        $txt = <<<HTML
+Should ignore image: <img src="https://example.com/foo.jpg" width="100" alt="foo" />
+HTML;
+
+        $html = $this->instance->convert($txt);
+
+        assertEquals(
+            'Should ignore image: <img src="https://example.com/foo.jpg" width="100" alt="foo" />',
+            $html,
+        );
+    }
+
     /**
      * urlProvider
      *
